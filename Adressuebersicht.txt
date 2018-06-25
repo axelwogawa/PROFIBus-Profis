@@ -1,0 +1,15 @@
+=== Geraete ===
+
+Adresse - Geraet 
+----------------
+6 - ?
+7 - ?
+
+
+=== Objekte ===
+
+Slot - Objekt - Beschreibung (Profile-PA-Devices_3042_V301_Dec04.PDF)
+---------------------------------------------------------------------
+1 - Directory Object - S. 122 ff.
+
+
