@@ -17,6 +17,9 @@ public:
 
 void setName(const QString &name);
 void connectGateway();
+private slots:
+void on_gateway_connect_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
