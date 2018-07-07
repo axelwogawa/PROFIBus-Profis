@@ -5,6 +5,7 @@
 #include <sstream>
 #include <pthread.h>
 #include <dlfcn.h>
+#include <cmath>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -17,6 +18,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dp_device.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -41,9 +43,37 @@ void MainWindow::connectGateway()
 }
 
 
+//---parse_doheader doc---
+//function initialising all attributes of a Dp_device object with the values received from a
+//directory object header read request
+//input:    value pair:
+//          first - received bytes in an array of length 1024
+//          second - number of received bytes
+void parse_doheader(std::pair<unsigned char*, int> input, Dp_device* new_device){
+    if (input.second != 13)
+    {
+        new_device = nullptr;
+    }
+    else
+    {
+        *new_device->setId(((int)input.first[1])*pow(2,8) + (int)input.first[2]);
+        *new_device->setRev_no(((int)input.first[3])*pow(2,8) + (int)input.first[4]);
+        //to be continued here: set the other attributes of new_device
+    }
+}
 
 
-std::string readparam (unsigned char flag, unsigned char address, unsigned char slot, unsigned char index)
+//---readparam doc---
+//function to read parameters from profibus device via UDP socket and internet proxy at
+//141.76.82.170:12345
+//input:    flag - message id
+//          address - profibus address of the device one wants to read from
+//          slot - slot of the object to read
+//          index - index of the object to read
+//output:   value pair:
+//          first - received bytes in an array of length 1024
+//          second - number of received bytes
+std::pair<unsigned char *, int> readparam (unsigned char flag, unsigned char address, unsigned char slot, unsigned char index)
 {
     int iSockFd = -1;
 
@@ -129,23 +159,27 @@ std::string readparam (unsigned char flag, unsigned char address, unsigned char 
 
     close(iSockFd);
 
-    return "n";
+    std::pair<unsigned char*, int> res(buff, iRcvdBytes);
+    return res;
 }
+
+
+
 
 
 
 void MainWindow::on_gateway_connect_clicked()
 {
-    unsigned char add = 6;
-    unsigned char slo = 1;
+    //TODO: maybe we can loop through addresses 0 to 255 or so instead of hardcoding addresses
+    unsigned char add = 6;  //address of first device
+    unsigned char slo = 1;  //slot of directory object header
     unsigned char ind = 0;
-
-    printf("hello");
 
     srand(time(NULL));
     unsigned char fla = 0xff & rand();
 
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
 
-    readparam(fla, add, slo, ind);
+    std::pair<unsigned char*, int> res(readparam(fla, add, slo, ind));
+    parse_doheader(res);
 }
