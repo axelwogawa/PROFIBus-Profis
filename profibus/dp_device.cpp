@@ -1,6 +1,7 @@
 #include "dp_device.h"
 
 Dp_device::Dp_device(int id_, int rev_no_, int no_do_, int no_obj_, int fst_idx_, int no_typ_) :
+
     id(id_), rev_no(rev_no_),no_do(no_do_), no_obj(no_obj_), fst_idx(fst_idx_), no_typ(no_typ_)
 {}
 
@@ -48,6 +49,11 @@ no_obj = value;
 int Dp_device::getFst_idx() const
 {
 return fst_idx;
+}
+
+void Dp_device::setFst_idx(int value)
+{
+fst_idx = value;
 }
 
 int Dp_device::getNo_typ() const

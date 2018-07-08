@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Man_ID_Table.xsl"?>
+<Man_ID_Table xmlns="http://www.profibus.com/IM/2003/11/Man_ID" xmlns:doc="http://www.profibus.com/Document" xmlns:prim="http://www.profibus.com/Common/2003/11/Primitives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.profibus.com/IM/2003/11/Man_ID
+IM-Man_ID-v1.0.xsd">
+		<doc:DocumentInfo Version="61" ReleaseType="Version" ReleaseDate="2009-05-19">
+		<prim:LastModified Tool="PROFIBUS I&amp;M Functions" User="PNO" Timestamp="2009-10-22T13:00:00+01:00"></prim:LastModified>
+		<doc:DocumentType>Table</doc:DocumentType>
+		<doc:DocumentTitle xml:lang="en">Manufacturer ID Table</doc:DocumentTitle>
+		<doc:DocumentTitle xml:lang="de">Herstellertabelle</doc:DocumentTitle>
+		<doc:DocumentNumber>6.012</doc:DocumentNumber>
+		<doc:Author TC="4" TC_Name="System Integration" WG="6" WG_Name="XML@PROFIBUS"/>
+		<doc:Copyright>(C) Copyright PNO 2009 - All Rights Reserved</doc:Copyright>
+		<doc:Comment>This file contains the list of manufacturers/profiles within PNO. This XML document may be downloaded by any PROFIBUS or PROFINET engineering or service tools as long as its manufacturer is a member of the PROFIBUS International organization.</doc:Comment>
+	</doc:DocumentInfo>
+
+  <Manufacturer ID="1">
+  <ManufacturerInfo>
+    <ManufacturerName>Acromag</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="10">
+  <ManufacturerInfo>
+    <ManufacturerName>Brooks Instrument</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="100">
+  <ManufacturerInfo>
+    <ManufacturerName>Oval</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="101">
+  <ManufacturerInfo>
+    <ManufacturerName>Masoneilan-Dresser</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="102">
+  <ManufacturerInfo>
+    <ManufacturerName>BESTA</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="103">
+  <ManufacturerInfo>
+    <ManufacturerName>Ohmart</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="104">
+  <ManufacturerInfo>
+    <ManufacturerName>Harold Beck and Sons</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI="http://www.haroldbeck.com"/>
+    <Info xml:lang="en" Tag="hotline_call" URI="+1 215 968 4600"/>
+    <Info xml:lang="fr" Tag="hotline_call" URI="+1 215 968 4600"/>
+    <Info xml:lang="de" Tag="hotline_call" URI="+1 215 968 4600"/>
+    <Info xml:lang="it" Tag="hotline_call" URI="+1 215 968 4600"/>
+    <Info xml:lang="es" Tag="hotline_call" URI="+1 215 968 4600"/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI="http://www.haroldbeck.com"/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="105">
+  <ManufacturerInfo>
+    <ManufacturerName>rittmeyer instrumentation</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="106">
+  <ManufacturerInfo>
+    <ManufacturerName>Rössel Messtechnik</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="107">
+  <ManufacturerInfo>
+    <ManufacturerName>Wika</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="108">
+  <ManufacturerInfo>
+    <ManufacturerName>Bopp &amp; Reuther Messtechnik</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="109">
+  <ManufacturerInfo>
+    <ManufacturerName>PR Electronics</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="11">
+  <ManufacturerInfo>
+    <ManufacturerName>Chessell</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="110">
+  <ManufacturerInfo>
+    <ManufacturerName>Jordan Controls</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="111">
+  <ManufacturerInfo>
+    <ManufacturerName>Valcom s.r.l.</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="112">
+  <ManufacturerInfo>
+    <ManufacturerName>US ELECTRIC MOTORS</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="113">
+  <ManufacturerInfo>
+    <ManufacturerName>Apparatebau Hundsbach</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="114">
+  <ManufacturerInfo>
+    <ManufacturerName>Dynisco</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="115">
+  <ManufacturerInfo>
+    <ManufacturerName>Spriano</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="116">
+  <ManufacturerInfo>
+    <ManufacturerName>Direct Measurement</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="117">
+  <ManufacturerInfo>
+    <ManufacturerName>Klay Instruments</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="118">
+  <ManufacturerInfo>
+    <ManufacturerName>CiDRA Corporate Services</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI="www.cidra.com"/>
+    <Info xml:lang="en" Tag="hotline_call" URI="+1 203-265-0035"/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="119">
+  <ManufacturerInfo>
+    <ManufacturerName>MMG AM DTR</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="12">
+  <ManufacturerInfo>
+    <ManufacturerName>Combustion Engineering</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="120">
+  <ManufacturerInfo>
+    <ManufacturerName>buerkert fluid control systems</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="121">
+  <ManufacturerInfo>
+    <ManufacturerName>AALIANT Process Mgt.</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="122">
+  <ManufacturerInfo>
+    <ManufacturerName>PONDUS INSTRUMENTS</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="123">
+  <ManufacturerInfo>
+    <ManufacturerName>ZAP S.A. Ostrow Wielkopolski</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="124">
+  <ManufacturerInfo>
+    <ManufacturerName>GLI</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="125">
+  <ManufacturerInfo>
+    <ManufacturerName>Fisher-Rosemount Performance Technologies</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="126">
+  <ManufacturerInfo>
+    <ManufacturerName>Paper Machine Components</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="127">
+  <ManufacturerInfo>
+    <ManufacturerName>LABOM</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="128">
+  <ManufacturerInfo>
+    <ManufacturerName>Danfoss Antriebs-und Regeltechnik GmbH</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="129">
+  <ManufacturerInfo>
+    <ManufacturerName>Turbo</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="13">
+  <ManufacturerInfo>
+    <ManufacturerName>Daniel Industries</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="130">
+  <ManufacturerInfo>
+    <ManufacturerName>TOKYO KEISO</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="131">
+  <ManufacturerInfo>
+    <ManufacturerName>SMC</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="132">
+  <ManufacturerInfo>
+    <ManufacturerName>Status Instruments</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="133">
+  <ManufacturerInfo>
+    <ManufacturerName>Huakong</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="134">
+  <ManufacturerInfo>
+    <ManufacturerName>Duon System</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="135">
+  <ManufacturerInfo>
+    <ManufacturerName>Vortek Instruments, LLC</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="136">
+  <ManufacturerInfo>
+    <ManufacturerName>AG Crosby</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="137">
+  <ManufacturerInfo>
+    <ManufacturerName>Action Instruments</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="138">
+  <ManufacturerInfo>
+    <ManufacturerName>Keystone Controls</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="139">
+  <ManufacturerInfo>
+    <ManufacturerName>Thermo Electric Co.</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="14">
+  <ManufacturerInfo>
+    <ManufacturerName>Delta</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="140">
+  <ManufacturerInfo>
+    <ManufacturerName>ISE-Magtech</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="141">
+  <ManufacturerInfo>
+    <ManufacturerName>Rueger</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="142">
+  <ManufacturerInfo>
+    <ManufacturerName>Mettler Toledo GmbH</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="143">
+  <ManufacturerInfo>
+    <ManufacturerName>Det-Tronics</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="144">
+  <ManufacturerInfo>
+    <ManufacturerName>Thermo Measure Tech</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="145">
+  <ManufacturerInfo>
+    <ManufacturerName>DeZURIK</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="146">
+  <ManufacturerInfo>
+    <ManufacturerName>Phase Dynamics</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="147">
+  <ManufacturerInfo>
+    <ManufacturerName>WELLTECH SHANGHAI</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="148">
+  <ManufacturerInfo>
+    <ManufacturerName>ENRAF</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="149">
+  <ManufacturerInfo>
+    <ManufacturerName>4tech ASA</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="15">
+  <ManufacturerInfo>
+    <ManufacturerName>Dieterich Standard</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="150">
+  <ManufacturerInfo>
+    <ManufacturerName>Brandt Instruments</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+<Manufacturer ID="151">
+  <ManufacturerInfo>
+    <ManufacturerName>Nivelco</ManufacturerName>
+    <Info xml:lang="en" Tag="web_url" URI=""/>
+  </ManufacturerInfo>
+  <IM_Info>
+    <IM_Root URI=""/>
+    <IM_Definitions URI=""/>
+  </IM_Info>
+</Manufacturer>
+
+
+
+</Man_ID_Table>

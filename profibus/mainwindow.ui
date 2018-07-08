@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>1202</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="gateway_connect">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>100</x>
       <y>30</y>
       <width>141</width>
       <height>31</height>
@@ -33,8 +33,8 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>90</y>
+      <x>210</x>
+      <y>140</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -46,7 +46,7 @@
    <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>370</x>
       <y>140</y>
       <width>141</width>
       <height>31</height>
@@ -56,14 +56,50 @@
      <string>readPressure</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>60</y>
-      <width>121</width>
+      <x>40</x>
+      <y>190</y>
+      <width>431</width>
+      <height>361</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="disconnect_gateway">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>30</y>
+      <width>151</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>device_details</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>30</y>
+      <width>331</width>
+      <height>351</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="read_xml">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>70</y>
+      <width>141</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>read_xml</string>
     </property>
    </widget>
   </widget>
@@ -72,8 +108,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
-     <height>26</height>
+     <width>1202</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>

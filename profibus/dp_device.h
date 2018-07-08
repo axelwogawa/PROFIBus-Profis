@@ -19,6 +19,7 @@ public:
     void setNo_obj(int value);
 
     int getFst_idx() const;
+    void setFst_idx(int value);
 
     int getNo_typ() const;
     void setNo_typ(int value);

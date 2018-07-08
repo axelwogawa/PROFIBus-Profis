@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include<QPushButton>
+#include <model.h>
 
 int main(int argc, char *argv[])
 {
@@ -8,6 +9,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
     w.connectGateway();
+
     w.setName("cool");
     return a.exec();
 }

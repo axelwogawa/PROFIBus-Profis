@@ -15,16 +15,23 @@
 #include <unistd.h>
 
 #include <time.h>
-
+#include <model.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dp_device.h"
+//#### xml file handling ###
+#include <QFile>
+#include <QXmlStreamReader>
+
+ QString console = "";
+ Dp_device default_device =  Dp_device(6, 1, 1, 1, 1, 1);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
 }
 
 MainWindow::~MainWindow()
@@ -34,9 +41,33 @@ MainWindow::~MainWindow()
 
 void MainWindow::setName(const QString &name)
  {
-  ui->lineEdit->setText(name);
+    console = console + "\n";
+    console = console +  name;
+
+    ui->textEdit->setText(console);
+
  }
 
+/**
+@docbookonly create a new table **/
+void MainWindow::make_table(int max_row, int max_column){
+    ui->tableWidget->setRowCount(max_row);
+    ui->tableWidget->setColumnCount(max_column);
+    ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Setting"));
+    ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Value"));
+    ui->tableWidget->setSortingEnabled(false);
+    ui->tableWidget->setCurrentCell(0,0,QItemSelectionModel::ClearAndSelect);
+
+}
+
+void MainWindow :: insertIntoTableRow(QString item1, QString item2){
+    int column = ui->tableWidget->currentColumn();
+    int row = ui->tableWidget->currentRow();
+    ui->tableWidget->setItem(row, column, new QTableWidgetItem(item1));
+    ui->tableWidget->setItem(row, column+1, new QTableWidgetItem(item2));
+    ui->tableWidget->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
+    ui->tableWidget->show();
+}
 void MainWindow::connectGateway()
 {
 //    ui->gateway_connect->click();
@@ -50,15 +81,23 @@ void MainWindow::connectGateway()
 //          first - received bytes in an array of length 1024
 //          second - number of received bytes
 void parse_doheader(std::pair<unsigned char*, int> input, Dp_device* new_device){
+MainWindow main;
     if (input.second != 13)
     {
         new_device = nullptr;
     }
     else
     {
-        *new_device->setId(((int)input.first[1])*pow(2,8) + (int)input.first[2]);
-        *new_device->setRev_no(((int)input.first[3])*pow(2,8) + (int)input.first[4]);
-        //to be continued here: set the other attributes of new_device
+
+        new_device->setId ( ( (int)input.first[1])*pow(2,8) + (int)input.first[2]) ;
+        new_device->setRev_no(((int)input.first[3])*pow(2,8) + (int)input.first[4]);
+        new_device->setNo_do(((int)input.first[5])*pow(2,8) + (int)input.first[6]);
+        new_device->setNo_obj(((int)input.first[7])*pow(2,8) + (int)input.first[8]);
+        new_device->setFst_idx(((int)input.first[9])*pow(2,8) + (int)input.first[10]);
+        new_device->setNo_typ(((int)input.first[11])*pow(2,8) + (int)input.first[12]);
+
+
+
     }
 }
 
@@ -75,13 +114,20 @@ void parse_doheader(std::pair<unsigned char*, int> input, Dp_device* new_device)
 //          second - number of received bytes
 std::pair<unsigned char *, int> readparam (unsigned char flag, unsigned char address, unsigned char slot, unsigned char index)
 {
+    MainWindow main;
+    main.setName ( "entering parameterread... " );
     int iSockFd = -1;
 
+   // iSockFd = shutdown (iSockFd, SHUT_RDWR) ;//  Returns 0 on success, -1 for errors, No more receptions or transmissions
+
     iSockFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
     if (iSockFd == -1)
     {
         printf("socket fail\n");
-        exit(1);
+        main.setName ("socket fail\n");
+        main.setName("socket failed: are you connected to a vpn ?");
+        //exit(1);
     }
 
     // udp sock init
@@ -97,10 +143,14 @@ std::pair<unsigned char *, int> readparam (unsigned char flag, unsigned char add
     if (bindRet == -1)
     {
         printf("bind fail. Addess: %i, SocketFD: %i, Errno: %i\n", INADDR_ANY, iSockFd, errno);
+     //   main.setName( "bind fail. Addess: %i, SocketFD: %i, Errno: %i\n" );
         int help = close(iSockFd);
         printf("Socked closed: %i. Errno: %i\n", help, errno);
-        exit(1);
+     //   main.setName("Socked closed: %i. Errno: %i\n", help, errno);
+     //   exit(1);
     }
+
+     main.setName( "SUCCESFULLY INITIALIZE UDP SOCKET" );
 
     unsigned char sbuf[4];
     sbuf[0] = flag;
@@ -138,6 +188,7 @@ std::pair<unsigned char *, int> readparam (unsigned char flag, unsigned char add
     int iRcvdBytes = recvfrom(iSockFd, buff, 1024, 0, (struct sockaddr*)&cliAddr, &cliLen);
 
     printf("received %d Byte(s)\n", iRcvdBytes);	//AW
+    main.setName("number of received bytes" + QString::number( iRcvdBytes));
 
     if (iRcvdBytes > 0)
     {
@@ -163,13 +214,10 @@ std::pair<unsigned char *, int> readparam (unsigned char flag, unsigned char add
     return res;
 }
 
-
-
-
-
-
 void MainWindow::on_gateway_connect_clicked()
 {
+    setName("#################################");
+    setName( "gateway connect was entered... " );
     //TODO: maybe we can loop through addresses 0 to 255 or so instead of hardcoding addresses
     unsigned char add = 6;  //address of first device
     unsigned char slo = 1;  //slot of directory object header
@@ -179,7 +227,62 @@ void MainWindow::on_gateway_connect_clicked()
     unsigned char fla = 0xff & rand();
 
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-
+    setName( "trying to open a connection to the gateway ... ");
     std::pair<unsigned char*, int> res(readparam(fla, add, slo, ind));
-    parse_doheader(res);
+    setName( "established connection" );
+
+    setName( "starting to interpret ..." );
+    parse_doheader(res,&default_device);
+    setName("\n");
+    setName("#################################");
+    setName("please press details to see device details");
+
 }
+
+void MainWindow::on_disconnect_gateway_clicked(){ // do not get confused by the name. this button was originally made to handle a disconnect from the gateway
+    setName( "disconnect gateway was clicked" );
+    make_table(6,2);
+   // Dp_device(int id_, int rev_no_, int no_do_, int no_obj_, int fst_idx_, int no_typ_);
+   insertIntoTableRow("id", "" +QString::number(default_device.getId()));
+   insertIntoTableRow("rev_no", "" +QString::number(default_device.getRev_no()));
+   insertIntoTableRow("no_do", "" +QString::number(default_device.getNo_do()));
+   insertIntoTableRow("no_obj", "" +QString::number(default_device.getNo_obj()));
+   insertIntoTableRow("fst_idx", "" +QString::number(default_device.getFst_idx()));
+   insertIntoTableRow("no_typ", "" +QString::number(default_device.getNo_typ()));
+
+}
+
+void MainWindow:: on_read_xml_clicked(){
+QFile xml_file ("/home/zida20/Downloads/PROFIBus-Profis/profibus/Man_ID_Table_scaled.xml");
+if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
+
+      setName("ERROR: cannot read file ...");
+  }
+else {setName("file was read succesfully .. ");}
+QXmlStreamReader xml_reader (&xml_file);
+
+if (xml_reader.readNextStartElement()) {
+    if (xml_reader.name()=="Man_ID_Table") {
+        setName("found the starting element");
+
+         while(xml_reader.readNextStartElement()){
+             if (xml_reader.name()!= "Manufacturer") {
+                setName (xml_reader.name().toString());
+                xml_reader.skipCurrentElement();
+
+             }else {
+                 setName (QString:: number( xml_reader.attributes().value("ID").toInt()));
+             }
+
+
+
+         } setName("ENd of if ");
+    }
+    else {"starting element is: " + xml_reader.name();}
+}
+
+}
+
+
+
+
