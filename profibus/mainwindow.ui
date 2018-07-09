@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1202</width>
-    <height>655</height>
+    <height>770</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,26 +17,26 @@
    <widget class="QPushButton" name="gateway_connect">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>30</y>
-      <width>141</width>
-      <height>31</height>
+      <x>30</x>
+      <y>120</y>
+      <width>181</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="mouseTracking">
      <bool>false</bool>
     </property>
     <property name="text">
-     <string>gateway_connect</string>
+     <string>device1_connect</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>140</y>
-      <width>141</width>
-      <height>31</height>
+      <x>120</x>
+      <y>270</y>
+      <width>181</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -46,10 +46,10 @@
    <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>140</y>
-      <width>141</width>
-      <height>31</height>
+      <x>120</x>
+      <y>220</y>
+      <width>181</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -59,8 +59,8 @@
    <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>190</y>
+      <x>30</x>
+      <y>340</y>
       <width>431</width>
       <height>361</height>
      </rect>
@@ -69,8 +69,8 @@
    <widget class="QPushButton" name="disconnect_gateway">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>30</y>
+      <x>630</x>
+      <y>390</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -92,14 +92,40 @@
    <widget class="QPushButton" name="read_xml">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>30</x>
       <y>70</y>
-      <width>141</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>read_xml</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="composite_list_directory">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>170</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>composite_list_directory</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>10</y>
+      <width>191</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ProfiBus Demonstrator</string>
     </property>
    </widget>
   </widget>
