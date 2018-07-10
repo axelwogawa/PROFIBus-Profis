@@ -66,46 +66,56 @@ void Dp_device::setNo_typ(int value)
 no_typ = value;
 }
 
-PB Dp_device::getPb() const
+PB& Dp_device::getPb()
 {
     return pb;
 }
 
-void Dp_device::setPb(const PB &value)
+void Dp_device::setPb(PB &value)
 {
     pb = value;
 }
 
-TB Dp_device::getTb(int index)
+TB& Dp_device::getTb(int index)
 {
     if (index < 256 && index >= 0)
     {
-        return tbs[index];
+        return tbs.at(index);
     }
-    return TB();
+//    return ???;
+}
+
+std::vector<TB>& Dp_device::getTbs(void)
+{
+    return tbs;
 }
 
 void Dp_device::setTb(TB &value, int index)
 {
     if (index < 256 && index >= 0)
     {
-        tbs[index] = value;
+        tbs.at(index) = value;
     }
 }
 
-FB Dp_device::getFb(int index)
+FB& Dp_device::getFb(int index)
 {
     if (index < 256 && index >= 0)
     {
-        return fbs[index];
+        return fbs.at(index);
     }
-   return FB();
+//   return ???;
+}
+
+std::vector<FB>& Dp_device::getFbs()
+{
+    return fbs;
 }
 
 void Dp_device::setFb(FB &value, int index)
 {
     if (index < 256 && index >= 0)
     {
-        fbs[index] = value;
+        fbs.at(index) = value;
     }
 }

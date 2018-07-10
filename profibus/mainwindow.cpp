@@ -16,6 +16,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dp_device.h"
+#include "pb.h"
+#include "tb.h"
+#include "fb.h"
 //#### xml file handling ###
 #include <QFile>
 #include <QXmlStreamReader>
@@ -147,55 +150,53 @@ MainWindow main;
 //          first - received bytes in an array of length 1024
 //          second - number of received bytes
 
-void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int> input, Dp_device* device){
-    int current = 0;
-    int current1 =0;
+void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_device& dev){
     // static information first ( see page 124)
-    unsigned char PB[1024];
-    unsigned char TB[1024];
-    unsigned char FB[1024];
-    int total = input.second;
-    int PB_slot = input.first.at(1);
-    int PB_index  = int(input.first.at(2));
-    int PB_num    = int(input.first.at(4)) ;
-    printf("PB_slot = % 3d,PB_index= % 3d,PB_num= % 3d ",PB_slot,PB_index ,PB_num);
-    setName("PB_offset = " + QString::number(PB_slot));
-    setName("PB_index = " + QString::number(PB_index));
-   setName("Physical blocks = " + QString::number(PB_num));
-    int TB_slot = int(input.first.at(5));
-    int TB_index = int(input.first.at(6));
-    int TB_num = int(input.first.at(8));
-    int FB_slot = int(input.first.at(9));
-    int FB_index = int(input.first.at(10));
-    int FB_num = int(input.first.at(12));
+
+    int PB_num    = int(input.first.at(4)) ;  //usually not required, because there's always exactly one PB
+    dev.getPb().setDo_index(input.first.at(1));
+    dev.getPb().setDo_offset(input.first.at(2));
+    dev.getPb().setSlot(int(input.first.at(12+1)));
+    dev.getPb().setIndex(int(input.first.at(12+2)));
+    dev.getPb().setNo_params(int(input.first.at(12+3))*pow(2,8) + int(input.first.at(12+4)));
+    printf("PB_slot = % 3d,PB_index= % 3d,PB_num= % 3d ",dev.getPb().getSlot(),dev.getPb().getIndex() ,PB_num);
+    setName("PB_offset = " + QString::number(dev.getPb().getSlot()));
+    setName("PB_index = " + QString::number(dev.getPb().getIndex()));
+    setName("Physical blocks = " + QString::number(PB_num));
+    insertThreeIntoTableRow(QString::number(dev.getPb().getSlot()),QString::number(dev.getPb().getIndex()),QString::number(dev.getPb().getNo_params()));
+    int current = 12+4;
+
+    int i;
+    int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
+    for (i = 0; i < TB_num; i++)
+    {
+        TB tb;
+        tb.setDo_index(int(input.first.at(5)));
+        tb.setDo_offset(int(input.first.at(6)));
+        tb.setSlot(int(input.first.at(current+i*4+1)));
+        tb.setIndex(int(input.first.at(current+i*4+2)));
+        tb.setNo_params(int(input.first.at(current+i*4+3))*pow(2,8) + int(input.first.at(current+i*4+4)));
+        dev.getTbs().push_back(tb);
+        insertThreeIntoTableRow(QString::number(tb.getSlot()),QString::number(tb.getIndex()),QString::number(tb.getNo_params()));
+    }
+
+    current += i*4;
+
+    int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
+    for (i = 0; i < FB_num; i++)
+    {
+        FB fb;
+        fb.setDo_index(int(input.first.at(9)));
+        fb.setDo_offset(int(input.first.at(10)));
+        fb.setSlot(int(input.first.at(current+i*4+1)));
+        fb.setIndex(int(input.first.at(current+i*4+2)));
+        fb.setNo_params(int(input.first.at(current+i*4+3))*pow(2,8) + int(input.first.at(current+i*4+4)));
+        dev.getFbs().push_back(fb);
+        insertThreeIntoTableRow(QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()));
+    }
     setName("Transducer Blocks = " + QString::number(TB_num));
     setName("Function Blocks = " + QString::number(FB_num));
     make_table(PB_num+TB_num+FB_num,3);
-    // dynmaic content is going to be interpreted here
-    for (int i = 0; (i/4) <PB_num;i=i+4){           // 4 Byte belong exactly to one block
-        PB[i] = input.first.at(12+i+1); // offset
-        PB[i+1] = input.first.at(12 + i+2); //index
-        PB[i+2] = input.first.at(12+i+3); // zero
-        PB[i+3] = input.first.at(12+i+4); // number of parameters in physical block
-        insertThreeIntoTableRow(QString::number(PB[i]),QString::number(PB[i+1]),QString::number(PB[i+3]));
-        current = 12+i+4;
-    }
-    for (int a = 0; (a/4)<TB_num;a=a+4){           // 4 Byte belong exactly to one block
-        TB[a] = input.first.at(current+a+1); // offset
-        TB[a+1] = input.first.at(current +a +2); //index
-        TB[a+2] = input.first.at(current +a+3); // zero
-        TB[a+3] = input.first.at(current +a+4); // number of parameters in transducer block
-        insertThreeIntoTableRow(QString::number(TB[a]),QString::number(TB[a+1]),QString::number(TB[a+3]));
-        current1 = current +a+4;
-    }
-    for (int b = 0; (b/4)<FB_num;b=b+4){           // 4 Byte belong exactly to one block
-        FB[b] = input.first.at(current1+b+1); // offset
-        FB[b+1] = input.first.at(current1+b+2); //index
-        FB[b+2] = input.first.at(current1+b+3); // zero
-        FB[b+3] = input.first.at(current1+b+4); // number of parameters in function block
-        insertThreeIntoTableRow(QString::number(FB[b]),QString::number(FB[b+1]),QString::number(FB[b+3]));
-    }
-
 }
 
 //---readparam doc---
@@ -301,7 +302,7 @@ void MainWindow::on_composite_list_directory_clicked(){
     unsigned char fla = 0xff & rand();
 
     std::pair<std::vector<int>, int> input = readparam(socket_fd,fla, add, slo, ind);
-    parse_composite_directory(input, &default_device);
+    parse_composite_directory(input, default_device);
       printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
       setName("done ... ");
 }

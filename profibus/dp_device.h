@@ -4,6 +4,7 @@
 #include "pb.h"
 #include "tb.h"
 #include "fb.h"
+#include "vector"
 
 
 class Dp_device
@@ -28,13 +29,15 @@ public:
     int getNo_typ() const;
     void setNo_typ(int value);
 
-    PB getPb() const;
-    void setPb(const PB &value);
+    PB& getPb();
+    void setPb(PB &value);
 
-    TB getTb(int index);
+    TB& getTb(int index);
+    std::vector<TB>& getTbs();
     void setTb(TB &value, int index);
 
-    FB getFb(int index);
+    FB& getFb(int index);
+    std::vector<FB>& getFbs();
     void setFb(FB &value, int index);
 
 private:
@@ -47,9 +50,9 @@ private:
     int no_typ;     //number of object types: phys/func/transd (=Num_Comp_List_Dir_Entry)
 
     //---values from directory object---
-    PB pb;          //the physical block object
-    TB tbs[256];    //array of transducer block objects
-    FB fbs[256];    //array of function block objects
+    PB pb;                  //the physical block object
+    std::vector<TB> tbs;    //vector of transducer block objects
+    std::vector<FB> fbs;    //vector of function block objects
 };
 
 #endif // DP_DEVICE_H
