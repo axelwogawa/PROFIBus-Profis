@@ -65,3 +65,47 @@ void Dp_device::setNo_typ(int value)
 {
 no_typ = value;
 }
+
+PB Dp_device::getPb() const
+{
+    return pb;
+}
+
+void Dp_device::setPb(const PB &value)
+{
+    pb = value;
+}
+
+TB Dp_device::getTb(int index)
+{
+    if (index < 256 && index >= 0)
+    {
+        return tbs[index];
+    }
+    return TB();
+}
+
+void Dp_device::setTb(TB &value, int index)
+{
+    if (index < 256 && index >= 0)
+    {
+        tbs[index] = value;
+    }
+}
+
+FB Dp_device::getFb(int index)
+{
+    if (index < 256 && index >= 0)
+    {
+        return fbs[index];
+    }
+   return FB();
+}
+
+void Dp_device::setFb(FB &value, int index)
+{
+    if (index < 256 && index >= 0)
+    {
+        fbs[index] = value;
+    }
+}

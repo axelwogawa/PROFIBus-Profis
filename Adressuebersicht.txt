@@ -8,8 +8,8 @@ Adresse - Geraet
 
 === Objekte ===
 
-Slot - Objekt - Beschreibung (Profile-PA-Devices_3042_V301_Dec04.PDF)
+Slot - Index - Objekt - Beschreibung (Profile-PA-Devices_3042_V301_Dec04.PDF)
 ---------------------------------------------------------------------
-1 - Directory Object - S. 42, 122 ff.
-
+1 - 0 - Directory Object Header - S. 42f., 122 ff.
+1 - 1 - Directory Object  - S. 124
 

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "dp_device.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,7 +21,7 @@ void setName(const QString &name);
 void connectGateway();
 int create_socket();
 void insertThreeIntoTableRow(QString item1, QString item2,QString item3);
-void parse_composite_directory (std::pair<unsigned char*, int> input);
+void parse_composite_directory (std::pair<std::vector<int>, int> input, Dp_device *device);
 private slots:
 void on_disconnect_gateway_clicked();
 void on_gateway_connect_clicked();

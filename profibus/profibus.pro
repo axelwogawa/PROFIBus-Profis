@@ -26,11 +26,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    dp_device.cpp
+    dp_device.cpp \
+    block.cpp \
+    pb.cpp \
+    tb.cpp \
+    fb.cpp
 
 HEADERS += \
         mainwindow.h \
-    dp_device.h
+    dp_device.h \
+    block.h \
+    pb.h \
+    tb.h \
+    fb.h
 
 FORMS += \
         mainwindow.ui

@@ -1,5 +1,9 @@
 #ifndef DP_DEVICE_H
 #define DP_DEVICE_H
+#include "block.h"
+#include "pb.h"
+#include "tb.h"
+#include "fb.h"
 
 
 class Dp_device
@@ -24,13 +28,28 @@ public:
     int getNo_typ() const;
     void setNo_typ(int value);
 
+    PB getPb() const;
+    void setPb(const PB &value);
+
+    TB getTb(int index);
+    void setTb(TB &value, int index);
+
+    FB getFb(int index);
+    void setFb(FB &value, int index);
+
 private:
+    //---values from directory object header---
     int id;         //device ID (=Dir_ID)
     int rev_no;     //revision number (=Rev-Number)
     int no_do;      //number of directory objects (=Num_Dir_Obj)
     int no_obj;     //number of objects in this device (=Num_Dir_Entry-Num_Comp_List_Dir_Entry)
     int fst_idx;    //index of the first object (=Fist_Comp_List_Dir_Entry)
     int no_typ;     //number of object types: phys/func/transd (=Num_Comp_List_Dir_Entry)
+
+    //---values from directory object---
+    PB pb;          //the physical block object
+    TB tbs[256];    //array of transducer block objects
+    FB fbs[256];    //array of function block objects
 };
 
 #endif // DP_DEVICE_H
