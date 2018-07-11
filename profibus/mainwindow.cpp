@@ -304,7 +304,7 @@ void MainWindow::on_gateway_connect_clicked()
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName("done ... ");
 
-    //print first results
+    //print DO read results
     make_table(6,2);
     // Dp_device(int id_, int rev_no_, int no_do_, int no_obj_, int fst_idx_, int no_typ_);
    insertIntoTableRow("Device ID", "" +QString::number(default_device.getId()));
@@ -314,7 +314,7 @@ void MainWindow::on_gateway_connect_clicked()
    insertIntoTableRow("Index of First Object", "" +QString::number(default_device.getFst_idx()));
    insertIntoTableRow("Number of Types", "" +QString::number(default_device.getNo_typ()));
 
-
+    //create drop down menus for buttons "read TB", "read FB"
 }
 
 
@@ -403,4 +403,5 @@ void MainWindow::on_readPb_clicked()
     unsigned char ind = (unsigned char)default_device.getPb().getIndex();
     std::pair<std::vector<int>, int> input = readparam(socket_fd,fla, add, slo, ind);
     parse_PB(input, default_device);
+    //show results
 }
