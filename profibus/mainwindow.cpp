@@ -153,7 +153,8 @@ MainWindow main;
 void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_device& dev){
     // static information first ( see page 124)
 
-    int PB_num    = int(input.first.at(4)) ;  //usually not required, because there's always exactly one PB
+    //Physical block
+    int PB_num = int(input.first.at(4)) ;  //usually not required, because there's always exactly one PB
     dev.getPb().setDo_index(input.first.at(1));
     dev.getPb().setDo_offset(input.first.at(2));
     dev.getPb().setSlot(int(input.first.at(12+1)));
@@ -166,6 +167,7 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
     insertThreeIntoTableRow(QString::number(dev.getPb().getSlot()),QString::number(dev.getPb().getIndex()),QString::number(dev.getPb().getNo_params()));
     int current = 12+4;
 
+    //Transducer blocks
     int i;
     int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
     for (i = 0; i < TB_num; i++)
@@ -179,9 +181,9 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
         dev.getTbs().push_back(tb);
         insertThreeIntoTableRow(QString::number(tb.getSlot()),QString::number(tb.getIndex()),QString::number(tb.getNo_params()));
     }
-
     current += i*4;
 
+    //Function blocks
     int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
     for (i = 0; i < FB_num; i++)
     {
@@ -280,6 +282,8 @@ void MainWindow::on_gateway_connect_clicked()
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName( "trying to open a connection to the gateway ... ");
     socket_fd = create_socket();
+
+    //read DO header
     std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
     setName( "established connection" );
     setName( "starting to interpret ..." );
@@ -288,36 +292,37 @@ void MainWindow::on_gateway_connect_clicked()
     setName("#################################");
     setName("please press details to see device details");
 
-}
-
-
-void MainWindow::on_composite_list_directory_clicked(){
+    //read DO object
     setName("#################################");
     setName( "composite list is requested" );
     printf("composite");
-    unsigned char add = 6;  //address of first device
-    unsigned char slo = 1;  //slot of directory object header
-    unsigned char ind = 1;
     srand(time(NULL));
-    unsigned char fla = 0xff & rand();
+    fla = 0xff & rand();
+    ind = 1;
+    res = readparam(socket_fd,fla, add, slo, ind);
+    parse_composite_directory(res, default_device);
+    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+    setName("done ... ");
 
-    std::pair<std::vector<int>, int> input = readparam(socket_fd,fla, add, slo, ind);
-    parse_composite_directory(input, default_device);
-      printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-      setName("done ... ");
+    //print first results
+    make_table(6,2);
+    // Dp_device(int id_, int rev_no_, int no_do_, int no_obj_, int fst_idx_, int no_typ_);
+   insertIntoTableRow("Device ID", "" +QString::number(default_device.getId()));
+   insertIntoTableRow("Revision Number", "" +QString::number(default_device.getRev_no()));
+   insertIntoTableRow("Number of Directory Objects", "" +QString::number(default_device.getNo_do()));
+   insertIntoTableRow("Number of Objects", "" +QString::number(default_device.getNo_obj()));
+   insertIntoTableRow("Index of First Object", "" +QString::number(default_device.getFst_idx()));
+   insertIntoTableRow("Number of Types", "" +QString::number(default_device.getNo_typ()));
+
+
+}
+
+
+void MainWindow::on_composite_list_directory_clicked(){    
 }
 
 void MainWindow::on_disconnect_gateway_clicked(){ // do not get confused by the name. this button was originally made to handle a disconnect from the gateway
     setName( "disconnect gateway was clicked" );
-    make_table(6,2);
-   // Dp_device(int id_, int rev_no_, int no_do_, int no_obj_, int fst_idx_, int no_typ_);
-   insertIntoTableRow("id", "" +QString::number(default_device.getId()));
-   insertIntoTableRow("rev_no", "" +QString::number(default_device.getRev_no()));
-   insertIntoTableRow("no_do", "" +QString::number(default_device.getNo_do()));
-   insertIntoTableRow("no_obj", "" +QString::number(default_device.getNo_obj()));
-   insertIntoTableRow("fst_idx", "" +QString::number(default_device.getFst_idx()));
-   insertIntoTableRow("no_typ", "" +QString::number(default_device.getNo_typ()));
-
 }
 
 void MainWindow:: on_read_xml_clicked(){
@@ -354,4 +359,48 @@ if (xml_reader.readNextStartElement()) {
 }
 
 
+void parse_PB(std::pair<std::vector<int>, int>& input, Dp_device& dev){
 
+    //parse device class
+    switch(input.first.at(3)) {
+    case 1:
+        dev.getPb().setCls("Transmitter");
+        break;
+    case 2:
+        dev.getPb().setCls("Actuator");
+        break;
+    case 3:
+        dev.getPb().setCls("Discrete I/O");
+        break;
+    case 4:
+        dev.getPb().setCls("Controller");
+        break;
+    case 5:
+        dev.getPb().setCls("Analyser");
+        break;
+    case 6:
+        dev.getPb().setCls("Lab Device");
+        break;
+    default:
+        if(input.first.at(3)>=128 && input.first.at(3) <= 249)
+            dev.getPb().setCls("vendor specific");
+        else
+            dev.getPb().setCls("unknown");
+        break;
+    }
+
+    //parse block view address
+    dev.getPb().setView_slot(int(input.first.at(18)));
+    dev.getPb().setView_index(int(input.first.at(19)));
+}
+
+void MainWindow::on_readPb_clicked()
+{
+    srand(time(NULL));
+    unsigned char fla = 0xff & rand();
+    unsigned char add = (unsigned char)default_device.getAdd();
+    unsigned char slo = (unsigned char)default_device.getPb().getSlot();
+    unsigned char ind = (unsigned char)default_device.getPb().getIndex();
+    std::pair<std::vector<int>, int> input = readparam(socket_fd,fla, add, slo, ind);
+    parse_PB(input, default_device);
+}

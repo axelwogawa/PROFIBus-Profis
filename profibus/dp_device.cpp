@@ -119,3 +119,13 @@ void Dp_device::setFb(FB &value, int index)
         fbs.at(index) = value;
     }
 }
+
+int Dp_device::getAdd() const
+{
+    return add;
+}
+
+void Dp_device::setAdd(int value)
+{
+    add = value;
+}

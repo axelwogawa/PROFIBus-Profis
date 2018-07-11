@@ -40,7 +40,13 @@ public:
     std::vector<FB>& getFbs();
     void setFb(FB &value, int index);
 
+    int getAdd() const;
+    void setAdd(int value);
+
 private:
+    //---general---
+    int add;        //device address
+
     //---values from directory object header---
     int id;         //device ID (=Dir_ID)
     int rev_no;     //revision number (=Rev-Number)

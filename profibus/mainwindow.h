@@ -30,8 +30,11 @@ void on_composite_list_directory_clicked();
 
 
 
+void on_readPb_clicked();
+
 private:
     Ui::MainWindow *ui;
+    std::vector<Dp_device> devices;
 };
 
 
