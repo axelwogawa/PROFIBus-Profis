@@ -5,7 +5,7 @@ blockIdentifier::blockIdentifier()
 {
 
 }
-
+// FUnctio block identifier according page 48
 QList<QString> blockIdentifier::getBlockIdentity (int blocknumber, int parent_class_number, int class_number) {
     QList<QString> identityList;
     switch (blocknumber) {
@@ -34,38 +34,54 @@ QList<QString> blockIdentifier::getParentClassFB(  int parentClass, int classNum
     QList<QString> list;
     switch (parentClass) {
     case 1:
-         list = getClassFB(classNumber);
+         list = get_AI_ClassFB(classNumber);
          list.append( "Input");
          break;
-    case 2:   list = getClassFB(classNumber);
+    case 2:   list = get_AI_ClassFB(classNumber);
         list.append( "Output");
         break;
-    case 3:   list = getClassFB(classNumber);
+    case 3:   list = get_Control_ClassFB(classNumber);
         list.append("Control");
         break;
-    case 4:   list = getClassFB(classNumber);
+    case 4:   list = get_AI_ClassFB(classNumber);
         list.append( "Advanced Control");
         break;
-    case 5:   list = getClassFB(classNumber);
+    case 5:   list = get_AI_ClassFB(classNumber);
         list.append( "Calculation");
         break;
-    case 6: list = getClassFB(classNumber);
+    case 6: list = get_AI_ClassFB(classNumber);
         list.append( "Auxiliary");
         break;
-    case 7:list = getClassFB(classNumber);
+    case 7:list = get_AI_ClassFB(classNumber);
         list.append( "Alert");
         break;
 
   default:
-        list = getClassFB(classNumber);
-                list.append( "special");
+        list = get_AI_ClassFB(classNumber);
+                list.append( "reserved");
         break;
     }
       return list;
 
 }
 
-QList<QString> blockIdentifier::getClassFB(int classNumber){
+QList<QString> blockIdentifier::get_Control_ClassFB(int classNumber){
+    QList<QString> identityList;
+    switch (classNumber) {
+    case 1: identityList.append("PID");
+         return identityList;
+        break;
+    case 2: identityList.append("SampleSelector");
+        break;
+    case 3: identityList.append("LabDeviceCOntrol");
+        break;
+
+  default:identityList.append("reserved");
+        break;
+    }
+}
+
+QList<QString> blockIdentifier::get_AI_ClassFB(int classNumber){
     QList<QString> identityList;
     switch (classNumber) {
     case 1: identityList.append("Analog Input");
