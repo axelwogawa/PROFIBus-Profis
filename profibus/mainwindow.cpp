@@ -51,6 +51,7 @@ void MainWindow::setName(const QString &name)
     console = console +  name;
 
     ui->textEdit->setText(console);
+    ui->textEdit->scrollToAnchor(name);
 
  }
 
@@ -161,15 +162,23 @@ void MainWindow::requestParameters(int nRow, int nCol){
     connect_value2=nCol;
     printf("reading fb1");
     unsigned char add = 6;  //address of first device
-    unsigned char slo = 1; //(ui->tableWidget->item(nRow,0)->text());
-    unsigned char ind = 16; //ui->tableWidget->item(nRow,1)->text();
+    bool ok;
+    unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
+    unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
     srand(time(NULL));
     unsigned char fla = 0xff & rand();
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName( "trying to open a connection to the gateway ... ");
     //read DO header
-    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);}
+    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
+    slo = res.first.at(res.second-3);
+    ind = res.first.at(res.second-2);
+    unsigned char list_views = res.first.at(res.second-1);
+    setName( "found" + QString::number(list_views) + "List views. List view 1 can be referenced by  Index" + QString::number(ind) + "and Slot" + QString::number(slo));
+    }
+
 }
+
 
 
 void MainWindow::connectGateway()
@@ -340,7 +349,8 @@ void MainWindow::on_gateway_connect_clicked()
     parse_composite_directory(res, default_device);
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName("done ... ");
-
+    ui->gateway_connect->setStyleSheet("background-color: green;");
+    ui->gateway_connect->setText("connected");
 
 
     //create drop down menus for buttons "read TB", "read FB"
