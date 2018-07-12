@@ -10,7 +10,7 @@ QList<QString> blockIdentifier::getBlockIdentity (int blocknumber, int parent_cl
     QList<QString> identityList;
     switch (blocknumber) {
     case 1:
-    identityList = getParentClassFB(parent_class_number,class_number);
+   // identityList = getParentClassPB(parent_class_number,class_number);
     identityList.append("PB");
         break;
     case 2:
@@ -35,24 +35,30 @@ QList<QString> blockIdentifier::getParentClassFB(  int parentClass, int classNum
     switch (parentClass) {
     case 1:
          list = getClassFB(classNumber);
-        list.append( "Input");
-         printf("%3d",list.size());
-
+         list.append( "Input");
+         break;
+    case 2:   list = getClassFB(classNumber);
+        list.append( "Output");
         break;
-    case 2: //identityList.append("Output");
+    case 3:   list = getClassFB(classNumber);
+        list.append("Control");
         break;
-    case 3: //identityList.append("Control");
+    case 4:   list = getClassFB(classNumber);
+        list.append( "Advanced Control");
         break;
-    case 4: //identityList.append("Advanced Control");
+    case 5:   list = getClassFB(classNumber);
+        list.append( "Calculation");
         break;
-    case 5: //identityList.append( "Calculation");
+    case 6: list = getClassFB(classNumber);
+        list.append( "Auxiliary");
         break;
-    case 6: //identityList.append("Auxiliary");
-        break;
-    case 7://identityList.append("Alert");
+    case 7:list = getClassFB(classNumber);
+        list.append( "Alert");
         break;
 
   default:
+        list = getClassFB(classNumber);
+                list.append( "special");
         break;
     }
       return list;
@@ -69,11 +75,13 @@ QList<QString> blockIdentifier::getClassFB(int classNumber){
     case 2: identityList.append("Discrete Input");
         break;
 
-  default:
+  default:identityList.append("special");
         break;
     }
 }
 
+
+//QList<QString> blockIdentifier::getParentClassTB(  int parentClass, int classNumber){}
 /* Transducer
 switch (classNumber) {
 case 1: identityList.append("");

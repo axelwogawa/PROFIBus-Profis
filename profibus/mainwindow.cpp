@@ -230,8 +230,12 @@ void MainWindow::requestParameters(int nRow, int nCol){
     slo = res.first.at(res.second-3);
     ind = res.first.at(res.second-2);
     unsigned char list_views = res.first.at(res.second-1);
-    QList<QString> list = blockIdent.getBlockIdentity(2,1,1);
+    //printf("2= %d,1= %d,1= %d ",res.first.at(1),res.first.at(2),res.first.at(3));
+
+   QList<QString> list = blockIdent.getBlockIdentity(res.first.at(2),res.first.at(3),res.first.at(4));
+// QList<QString> list = blockIdent.getBlockIdentity(2,1,1);
     make_dynamic_table("tableWidget_2",6,1,{"block","slot","index","parent","class",""});
+
     setName( "found" +list.first() + QString::number(list_views) + "List views. List view 1 can be referenced by  Index" + QString::number(ind) + "and Slot" + QString::number(slo));
     insert_row_into_table("tableWidget_2",6,{list.at(2),QString::number(slo),QString::number(ind),list.at(1),list.at(0),"readValue"});
     pointer = view;
