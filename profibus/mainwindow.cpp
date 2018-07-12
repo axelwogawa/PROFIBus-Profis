@@ -22,11 +22,15 @@
 //#### xml file handling ###
 #include <QFile>
 #include <QXmlStreamReader>
+#include <QApplication>
 
+
+// #### global variable definitions #######
  QString console = "";
  Dp_device default_device =  Dp_device(6, 1, 1, 1, 1, 1);
  int socket_fd;
-
+ int connect_value1 =0; // needed to compare weather the clicked cell has changed or not
+ int connect_value2 =0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -50,36 +54,123 @@ void MainWindow::setName(const QString &name)
 
  }
 
-/**
-@docbookonly create a new table **/
-void MainWindow::make_table(int max_row, int max_column){
-    ui->tableWidget->setRowCount(max_row);
-    ui->tableWidget->setColumnCount(max_column);
-    ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Setting"));
-    ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Value"));
+
+
+//---readparam doc---
+//function to read parameters from profibus device via UDP socket and internet proxy at
+//141.76.82.170:12345
+//input:    flag - message id
+//          address - profibus address of the device one wants to read from
+//          slot - slot of the object to read
+//          index - index of the object to read
+//output:   value pair:
+//          first - received bytes in an array of length 1024
+//          second - number of received bytes
+std::pair<std::vector<int>, int> readparam (int iSockFd, unsigned char flag, unsigned char address, unsigned char slot, unsigned char index)
+{
+    MainWindow main;
+    unsigned char sbuf[4];
+    sbuf[0] = flag;
+    sbuf[1] = address;
+    sbuf[2] = slot;
+    sbuf[3] = index;
+    struct sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = inet_addr("141.76.82.170");
+    serverAddr.sin_port = htons(12345);
+    int serverLen = sizeof(serverAddr);
+    printf("sending...\n");
+    int sendRes = sendto(iSockFd, sbuf, 4, 0, (struct sockaddr*)&serverAddr, serverLen);
+    if (sendRes != 4)
+    {
+        printf("send fail %d\n", sendRes);
+        close(iSockFd);
+        exit(1);
+    }
+    printf("ok.\n");
+    struct sockaddr_in cliAddr;
+    memset(&cliAddr, 0, sizeof(cliAddr));
+    socklen_t cliLen;
+    unsigned char buff[1024];
+    printf("receiving...\n");
+    int iRcvdBytes = recvfrom(iSockFd, buff, 1024, 0, (struct sockaddr*)&cliAddr, &cliLen);
+    printf("received %d Byte(s)\n", iRcvdBytes);	//AW
+    main.setName("number of received bytes" + QString::number( iRcvdBytes));
+
+    if (iRcvdBytes > 0)
+    {
+        if (buff[0] == sbuf[0])
+        {
+            int i;
+            for (i = 0; i < iRcvdBytes; i++)
+                printf(" % 3d,", buff[i]);      //im Array buff[] steht die Hex - Antwort des PROFIbus-Geräts
+                printf("== \n");
+//            for (i = 0; i < iRcvdBytes; i++)
+//                printf("0x%02x,", buff[i]);
+//            printf("\n");
+        }
+//        else
+//            printf("receive fail: frame marker differs - sent: %d != rcvd: %d\n", sbuf[0], buff[0]);
+    }
+    else
+//        printf("receive fail %d\n", iRcvdBytes);
+
+    close(iSockFd);
+    std::vector<int> vector(buff, buff+iRcvdBytes);
+    std::pair<std::vector<int>, int> res(vector, iRcvdBytes);
+    return res;
+}
+
+
+
+
+
+void MainWindow::make_dynamic_table (int coloumns,int row, QStringList coloumn_names) {
+    ui->tableWidget->clear();
+    ui->tableWidget->setRowCount(row);
+    ui->tableWidget->setColumnCount(coloumns);
+    for (int i = 0; i<coloumns;i++){
+
+        ui->tableWidget->setHorizontalHeaderItem(i,new QTableWidgetItem(coloumn_names.at(i)));
+    }
     ui->tableWidget->setSortingEnabled(false);
     ui->tableWidget->setCurrentCell(0,0,QItemSelectionModel::ClearAndSelect);
-
+    ui->tableWidget->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 }
 
-void MainWindow :: insertIntoTableRow(QString item1, QString item2){
+void MainWindow::insert_row_into_table(int coloumns,QStringList coloumn_names){
     int column = ui->tableWidget->currentColumn();
     int row = ui->tableWidget->currentRow();
-    ui->tableWidget->setItem(row, column, new QTableWidgetItem(item1));
-    ui->tableWidget->setItem(row, column+1, new QTableWidgetItem(item2));
+    for (int i=0;i<coloumns;i++){
+    ui->tableWidget->setItem(row, column+i, new QTableWidgetItem(coloumn_names.at(i)));
+    }
+    connect(ui->tableWidget, SIGNAL( cellDoubleClicked (int, int) ),
+     this, SLOT( requestParameters( int, int ) ) );
+    ui->tableWidget->setSortingEnabled(false);
     ui->tableWidget->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
     ui->tableWidget->show();
 }
 
-void MainWindow :: insertThreeIntoTableRow(QString item1, QString item2,QString item3){
-    int column = ui->tableWidget->currentColumn();
-    int row = ui->tableWidget->currentRow();
-    ui->tableWidget->setItem(row, column, new QTableWidgetItem(item1));
-    ui->tableWidget->setItem(row, column+1, new QTableWidgetItem(item2));
-    ui->tableWidget->setItem(row, column+2, new QTableWidgetItem(item3));
-    ui->tableWidget->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
-    ui->tableWidget->show();
+void MainWindow::requestParameters(int nRow, int nCol){
+    if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
+    else {
+    printf("clicked");
+    setName("Row" + QString::number(nRow) + "and Coloumn: " + QString::number(nCol) + "was clicked");
+    // to be continued here !
+    connect_value1=nRow;
+    connect_value2=nCol;
+    printf("reading fb1");
+    unsigned char add = 6;  //address of first device
+    unsigned char slo = 1; //(ui->tableWidget->item(nRow,0)->text());
+    unsigned char ind = 16; //ui->tableWidget->item(nRow,1)->text();
+    srand(time(NULL));
+    unsigned char fla = 0xff & rand();
+    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+    setName( "trying to open a connection to the gateway ... ");
+    //read DO header
+    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);}
 }
+
 
 void MainWindow::connectGateway()
 {
@@ -155,21 +246,26 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
 
     //Physical block
     int PB_num = int(input.first.at(4)) ;  //usually not required, because there's always exactly one PB
+    int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
+    int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
+     make_dynamic_table(5,FB_num+TB_num+PB_num,{"BlockType","Slot","Index","Parameters",""});
     dev.getPb().setDo_index(input.first.at(1));
     dev.getPb().setDo_offset(input.first.at(2));
     dev.getPb().setSlot(int(input.first.at(12+1)));
     dev.getPb().setIndex(int(input.first.at(12+2)));
     dev.getPb().setNo_params(int(input.first.at(12+3))*pow(2,8) + int(input.first.at(12+4)));
-    printf("PB_slot = % 3d,PB_index= % 3d,PB_num= % 3d ",dev.getPb().getSlot(),dev.getPb().getIndex() ,PB_num);
+
+    //printf("PB_slot = % 3d,PB_index= % 3d,PB_num= % 3d ",dev.getPb().getSlot(),dev.getPb().getIndex() ,dev.getPb().getNo_params());
+
     setName("PB_offset = " + QString::number(dev.getPb().getSlot()));
     setName("PB_index = " + QString::number(dev.getPb().getIndex()));
     setName("Physical blocks = " + QString::number(PB_num));
-    insertThreeIntoTableRow(QString::number(dev.getPb().getSlot()),QString::number(dev.getPb().getIndex()),QString::number(dev.getPb().getNo_params()));
-    int current = 12+4;
 
+   insert_row_into_table(5,{"PB",QString::number(dev.getPb().getSlot()),QString::number(dev.getPb().getIndex()),QString::number(dev.getPb().getNo_params()),"read param"});
+    int current = 12+4;
     //Transducer blocks
     int i;
-    int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
+
     for (i = 0; i < TB_num; i++)
     {
         TB tb;
@@ -179,93 +275,33 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
         tb.setIndex(int(input.first.at(current+i*4+2)));
         tb.setNo_params(int(input.first.at(current+i*4+3))*pow(2,8) + int(input.first.at(current+i*4+4)));
         dev.getTbs().push_back(tb);
-        insertThreeIntoTableRow(QString::number(tb.getSlot()),QString::number(tb.getIndex()),QString::number(tb.getNo_params()));
+        printf("TB_slot = % 3d,TB_index= % 3d,TB_num= % 3d ",tb.getSlot(),tb.getDo_index(),tb.getNo_params());
+      insert_row_into_table(5,{"TB",QString::number(tb.getSlot()),QString::number(tb.getIndex()),QString::number(tb.getNo_params()),"read param"});
     }
     current += i*4;
 
     //Function blocks
-    int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
+    //int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
+    FB fb;
     for (i = 0; i < FB_num; i++)
     {
-        FB fb;
+
         fb.setDo_index(int(input.first.at(9)));
         fb.setDo_offset(int(input.first.at(10)));
         fb.setSlot(int(input.first.at(current+i*4+1)));
         fb.setIndex(int(input.first.at(current+i*4+2)));
         fb.setNo_params(int(input.first.at(current+i*4+3))*pow(2,8) + int(input.first.at(current+i*4+4)));
         dev.getFbs().push_back(fb);
-        insertThreeIntoTableRow(QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()));
+        printf("FB_slot = % 3d,FB_index= % 3d,FB_num= % 3d ",fb.getSlot(),fb.getDo_index(),fb.getNo_params());
+        //insertThreeIntoTableRow(QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()));
+        insert_row_into_table(5,{"FB",QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()),"read param"});
+
     }
     setName("Transducer Blocks = " + QString::number(TB_num));
     setName("Function Blocks = " + QString::number(FB_num));
-    make_table(PB_num+TB_num+FB_num,3);
+
+    //insert_row_into_table(5,{"TB",QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()),"click here"});
 }
-
-//---readparam doc---
-//function to read parameters from profibus device via UDP socket and internet proxy at
-//141.76.82.170:12345
-//input:    flag - message id
-//          address - profibus address of the device one wants to read from
-//          slot - slot of the object to read
-//          index - index of the object to read
-//output:   value pair:
-//          first - received bytes in an array of length 1024
-//          second - number of received bytes
-std::pair<std::vector<int>, int> readparam (int iSockFd, unsigned char flag, unsigned char address, unsigned char slot, unsigned char index)
-{
-    MainWindow main;
-    unsigned char sbuf[4];
-    sbuf[0] = flag;
-    sbuf[1] = address;
-    sbuf[2] = slot;
-    sbuf[3] = index;
-    struct sockaddr_in serverAddr;
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = inet_addr("141.76.82.170");
-    serverAddr.sin_port = htons(12345);
-    int serverLen = sizeof(serverAddr);
-    printf("sending...\n");
-    int sendRes = sendto(iSockFd, sbuf, 4, 0, (struct sockaddr*)&serverAddr, serverLen);
-    if (sendRes != 4)
-    {
-        printf("send fail %d\n", sendRes);
-        close(iSockFd);
-        exit(1);
-    }
-    printf("ok.\n");
-    struct sockaddr_in cliAddr;
-    memset(&cliAddr, 0, sizeof(cliAddr));
-    socklen_t cliLen;
-    unsigned char buff[1024];
-    printf("receiving...\n");
-    int iRcvdBytes = recvfrom(iSockFd, buff, 1024, 0, (struct sockaddr*)&cliAddr, &cliLen);
-    printf("received %d Byte(s)\n", iRcvdBytes);	//AW
-    main.setName("number of received bytes" + QString::number( iRcvdBytes));
-
-    if (iRcvdBytes > 0)
-    {
-        if (buff[0] == sbuf[0])
-        {
-            int i;
-            for (i = 0; i < iRcvdBytes; i++)
-                printf(" % 3d,", buff[i]);      //im Array buff[] steht die Hex - Antwort des PROFIbus-Geräts
-                printf("== \n");
-//            for (i = 0; i < iRcvdBytes; i++)
-//                printf("0x%02x,", buff[i]);
-//            printf("\n");
-        }
-//        else
-//            printf("receive fail: frame marker differs - sent: %d != rcvd: %d\n", sbuf[0], buff[0]);
-    }
-    else
-//        printf("receive fail %d\n", iRcvdBytes);
-
-    close(iSockFd);
-    std::vector<int> vector(buff, buff+iRcvdBytes);
-    std::pair<std::vector<int>, int> res(vector, iRcvdBytes);
-    return res;
-}
-
 
 
 
@@ -291,6 +327,7 @@ void MainWindow::on_gateway_connect_clicked()
     setName("\n");
     setName("#################################");
     setName("please press details to see device details");
+    //print DO read results
 
     //read DO object
     setName("#################################");
@@ -304,15 +341,7 @@ void MainWindow::on_gateway_connect_clicked()
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName("done ... ");
 
-    //print DO read results
-    make_table(6,2);
-    // Dp_device(int id_, int rev_no_, int no_do_, int no_obj_, int fst_idx_, int no_typ_);
-   insertIntoTableRow("Device ID", "" +QString::number(default_device.getId()));
-   insertIntoTableRow("Revision Number", "" +QString::number(default_device.getRev_no()));
-   insertIntoTableRow("Number of Directory Objects", "" +QString::number(default_device.getNo_do()));
-   insertIntoTableRow("Number of Objects", "" +QString::number(default_device.getNo_obj()));
-   insertIntoTableRow("Index of First Object", "" +QString::number(default_device.getFst_idx()));
-   insertIntoTableRow("Number of Types", "" +QString::number(default_device.getNo_typ()));
+
 
     //create drop down menus for buttons "read TB", "read FB"
 }
@@ -328,34 +357,47 @@ void MainWindow::on_disconnect_gateway_clicked(){ // do not get confused by the 
 void MainWindow:: on_read_xml_clicked(){
 
 
-QFile xml_file ("/Man_ID_Table_scaled.xml");
-if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
 
-      setName("ERROR: cannot read file ...");
-  }
-else {setName("file was read succesfully .. ");}
-QXmlStreamReader xml_reader (&xml_file);
+    QFile xml_file ("/Man_ID_Table_scaled.xml");
+    if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
 
-if (xml_reader.readNextStartElement()) {
-    if (xml_reader.name()=="Man_ID_Table") {
-        setName("found the starting element");
+          setName("ERROR: cannot read file ...");
+      }
+    else {setName("file was read succesfully .. ");}
+    QXmlStreamReader xml_reader (&xml_file);
 
-         while(xml_reader.readNextStartElement()){
-             if (xml_reader.name()!= "Manufacturer") {
-                setName (xml_reader.name().toString());
-                xml_reader.skipCurrentElement();
+    if (xml_reader.readNextStartElement()) {
+        if (xml_reader.name()=="Man_ID_Table") {
+            setName("found the starting element");
 
-             }else {
-                 setName (QString:: number( xml_reader.attributes().value("ID").toInt()));
-             }
+             while(xml_reader.readNextStartElement()){
+                 if (xml_reader.name()!= "Manufacturer") {
+                    setName (xml_reader.name().toString());
+                    xml_reader.skipCurrentElement();
+
+                 }else {
+                     setName (QString:: number( xml_reader.attributes().value("ID").toInt()));
+                 }
 
 
 
-         } setName("ENd of if ");
+             } setName("ENd of if ");
+        }
+       // else {"starting element is: " + xml_reader.name();}
     }
-   // else {"starting element is: " + xml_reader.name();}
-}
 
+    printf("reading fb1");
+    unsigned char add = 6;  //address of first device
+    unsigned char slo = 1;  //slot of directory object header
+    unsigned char ind = 100;
+    srand(time(NULL));
+    unsigned char fla = 0xff & rand();
+    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+    setName( "trying to open a connection to the gateway ... ");
+
+
+    //read DO header
+    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
 }
 
 

@@ -69,8 +69,8 @@
    <widget class="QPushButton" name="disconnect_gateway">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>390</y>
+      <x>360</x>
+      <y>140</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -82,9 +82,9 @@
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>30</y>
-      <width>331</width>
+      <x>570</x>
+      <y>90</y>
+      <width>601</width>
       <height>351</height>
      </rect>
     </property>
@@ -118,8 +118,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>10</y>
+      <x>740</x>
+      <y>20</y>
       <width>191</width>
       <height>51</height>
      </rect>
@@ -135,7 +135,7 @@
      <x>0</x>
      <y>0</y>
      <width>1202</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
