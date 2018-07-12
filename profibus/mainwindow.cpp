@@ -126,30 +126,46 @@ std::pair<std::vector<int>, int> readparam (int iSockFd, unsigned char flag, uns
 
 
 
-void MainWindow::make_dynamic_table (int coloumns,int row, QStringList coloumn_names) {
-    ui->tableWidget->clear();
-    ui->tableWidget->setRowCount(row);
-    ui->tableWidget->setColumnCount(coloumns);
+void MainWindow::make_dynamic_table (QString tableWidget,int coloumns,int row, QStringList coloumn_names) {
+   QTableWidget* table;
+    if (0== QString::compare(tableWidget, "tableWidget", Qt::CaseInsensitive)) {
+      table =  ui->tableWidget;
+    }
+    else if (0== QString::compare(tableWidget, "tableWidget_2", Qt::CaseInsensitive)){
+        table =  ui->tableWidget_2;
+    }
+    table->clear();
+    table->setRowCount(row);
+    table->setColumnCount(coloumns);
     for (int i = 0; i<coloumns;i++){
 
-        ui->tableWidget->setHorizontalHeaderItem(i,new QTableWidgetItem(coloumn_names.at(i)));
+        table->setHorizontalHeaderItem(i,new QTableWidgetItem(coloumn_names.at(i)));
     }
-    ui->tableWidget->setSortingEnabled(false);
-    ui->tableWidget->setCurrentCell(0,0,QItemSelectionModel::ClearAndSelect);
-    ui->tableWidget->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    table->setSortingEnabled(false);
+    table->setCurrentCell(0,0,QItemSelectionModel::ClearAndSelect);
+    table->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    table->setStyleSheet("background:#778899;");
 }
 
-void MainWindow::insert_row_into_table(int coloumns,QStringList coloumn_names){
-    int column = ui->tableWidget->currentColumn();
-    int row = ui->tableWidget->currentRow();
+void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringList coloumn_names){
+    QTableWidget* table;
+     if (0== QString::compare(tableWidget, "tableWidget", Qt::CaseInsensitive)) {
+       table =  ui->tableWidget;
+     }
+     else if (0== QString::compare(tableWidget, "tableWidget_2", Qt::CaseInsensitive)){
+         table =  ui->tableWidget_2;
+     }
+    int column = table->currentColumn();
+    int row = table->currentRow();
     for (int i=0;i<coloumns;i++){
-    ui->tableWidget->setItem(row, column+i, new QTableWidgetItem(coloumn_names.at(i)));
+    table->setItem(row, column+i, new QTableWidgetItem(coloumn_names.at(i)));
     }
-    connect(ui->tableWidget, SIGNAL( cellDoubleClicked (int, int) ),
+    connect(table, SIGNAL( cellDoubleClicked (int, int) ),
      this, SLOT( requestParameters( int, int ) ) );
-    ui->tableWidget->setSortingEnabled(false);
-    ui->tableWidget->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
-    ui->tableWidget->show();
+    table->setSortingEnabled(false);
+    table->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
+    table->adjustSize();
+    table->show();
 }
 
 void MainWindow::requestParameters(int nRow, int nCol){
@@ -257,7 +273,8 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
     int PB_num = int(input.first.at(4)) ;  //usually not required, because there's always exactly one PB
     int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
     int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
-     make_dynamic_table(5,FB_num+TB_num+PB_num,{"BlockType","Slot","Index","Parameters",""});
+    make_dynamic_table("tableWidget",5,FB_num+TB_num+PB_num,{"BlockType","Slot","Index","Parameters",""});
+    ui->label_2->setText("Composite Directory: SLOT 1 INDEX 1");
     dev.getPb().setDo_index(input.first.at(1));
     dev.getPb().setDo_offset(input.first.at(2));
     dev.getPb().setSlot(int(input.first.at(12+1)));
@@ -270,7 +287,7 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
     setName("PB_index = " + QString::number(dev.getPb().getIndex()));
     setName("Physical blocks = " + QString::number(PB_num));
 
-   insert_row_into_table(5,{"PB",QString::number(dev.getPb().getSlot()),QString::number(dev.getPb().getIndex()),QString::number(dev.getPb().getNo_params()),"read param"});
+   insert_row_into_table("tableWidget",5,{"PB",QString::number(dev.getPb().getSlot()),QString::number(dev.getPb().getIndex()),QString::number(dev.getPb().getNo_params()),"read param"});
     int current = 12+4;
     //Transducer blocks
     int i;
@@ -285,7 +302,7 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
         tb.setNo_params(int(input.first.at(current+i*4+3))*pow(2,8) + int(input.first.at(current+i*4+4)));
         dev.getTbs().push_back(tb);
         printf("TB_slot = % 3d,TB_index= % 3d,TB_num= % 3d ",tb.getSlot(),tb.getDo_index(),tb.getNo_params());
-      insert_row_into_table(5,{"TB",QString::number(tb.getSlot()),QString::number(tb.getIndex()),QString::number(tb.getNo_params()),"read param"});
+      insert_row_into_table("tableWidget",5,{"TB",QString::number(tb.getSlot()),QString::number(tb.getIndex()),QString::number(tb.getNo_params()),"read param"});
     }
     current += i*4;
 
@@ -303,7 +320,7 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
         dev.getFbs().push_back(fb);
         printf("FB_slot = % 3d,FB_index= % 3d,FB_num= % 3d ",fb.getSlot(),fb.getDo_index(),fb.getNo_params());
         //insertThreeIntoTableRow(QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()));
-        insert_row_into_table(5,{"FB",QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()),"read param"});
+        insert_row_into_table("tableWidget",5,{"FB",QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()),"read param"});
 
     }
     setName("Transducer Blocks = " + QString::number(TB_num));

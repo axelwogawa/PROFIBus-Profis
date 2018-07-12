@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "dp_device.h"
+#include<QTableWidget>
 
 namespace Ui {
 class MainWindow;
@@ -22,8 +23,8 @@ void connectGateway();
 int create_socket();
 void insertThreeIntoTableRow(QString item1, QString item2,QString item3);
 void parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_device& device);
-void make_dynamic_table (int coloumns,int row, QStringList coloumn_names);
-void insert_row_into_table(int coloumns,QStringList coloumn_names);
+void make_dynamic_table (QString tableWidget,int coloumns,int row, QStringList coloumn_names);
+void insert_row_into_table(QString tableWidget,int coloumns,QStringList coloumn_names);
 
 private slots:
 void on_disconnect_gateway_clicked();
