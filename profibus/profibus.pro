@@ -30,7 +30,8 @@ SOURCES += \
     block.cpp \
     pb.cpp \
     tb.cpp \
-    fb.cpp
+    fb.cpp \
+    blockidentifier.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -38,7 +39,8 @@ HEADERS += \
     block.h \
     pb.h \
     tb.h \
-    fb.h
+    fb.h \
+    blockidentifier.h
 
 FORMS += \
         mainwindow.ui

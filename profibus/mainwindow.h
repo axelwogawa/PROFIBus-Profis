@@ -32,6 +32,7 @@ void on_gateway_connect_clicked();
 void on_read_xml_clicked();
 void on_composite_list_directory_clicked();
 void requestParameters(int,int);
+void requestValues( int, int ) ;
 
 
 void on_readPb_clicked();

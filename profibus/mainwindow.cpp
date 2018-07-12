@@ -23,7 +23,7 @@
 #include <QFile>
 #include <QXmlStreamReader>
 #include <QApplication>
-
+#include <blockidentifier.h>
 
 // #### global variable definitions #######
  QString console = "";
@@ -31,7 +31,8 @@
  int socket_fd;
  int connect_value1 =0; // needed to compare weather the clicked cell has changed or not
  int connect_value2 =0;
-
+ enum currentAction{header,composite_directory,view,data};
+ currentAction pointer;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -160,37 +161,80 @@ void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringL
     for (int i=0;i<coloumns;i++){
     table->setItem(row, column+i, new QTableWidgetItem(coloumn_names.at(i)));
     }
+    if (pointer==composite_directory) {
     connect(table, SIGNAL( cellDoubleClicked (int, int) ),
-     this, SLOT( requestParameters( int, int ) ) );
+     this, SLOT( requestParameters( int, int ) ) );}
+
+    if (pointer==view) {
+    connect(table, SIGNAL( cellDoubleClicked (int, int) ),
+     this, SLOT( requestValues( int, int ) ) );}
+
     table->setSortingEnabled(false);
     table->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
     table->adjustSize();
     table->show();
 }
+void MainWindow::requestValues(int nRow, int nCol){
 
-void MainWindow::requestParameters(int nRow, int nCol){
     if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
     else {
-    printf("clicked");
+    printf("clickedValues");
     setName("Row" + QString::number(nRow) + "and Coloumn: " + QString::number(nCol) + "was clicked");
     // to be continued here !
     connect_value1=nRow;
     connect_value2=nCol;
-    printf("reading fb1");
+
     unsigned char add = 6;  //address of first device
     bool ok;
-    unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
-    unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
+    unsigned char slo = (ui->tableWidget_2->item(nRow,1)->text()).toInt(&ok,10);
+    unsigned char ind = (ui->tableWidget_2->item(nRow,2)->text()).toInt(&ok,10);
     srand(time(NULL));
     unsigned char fla = 0xff & rand();
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName( "trying to open a connection to the gateway ... ");
     //read DO header
     std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
+    // regarding page 150: 18 Blocks are going to be received, the last 5 blocks belong to the out (value + status in Data Type 101)
+    // regarding to page 52:  Data Type 101 consists of 4 Byte value + 1 byte status
+    int status = res.first.at(res.second-1);
+    int value = res.first.at(res.second-5) + res.first.at(res.second-4) + res.first.at(res.second-3) + res.first.at(res.second-2);
+    setName("Value of FB1: " + QString::number(value));
+    }
+
+
+}
+
+
+void MainWindow::requestParameters(int nRow, int nCol){
+    blockIdentifier blockIdent;
+    if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
+    else {
+
+    setName("Row" + QString::number(nRow) + "and Coloumn: " + QString::number(nCol) + "was clicked");
+    // to be continued here !
+    connect_value1=nRow;
+    connect_value2=nCol;
+    pointer = view;
+    unsigned char add = 6;  //address of first device
+    bool ok;
+    unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
+    unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
+    srand(time(NULL));
+    printf("clickedadasdasdasdsad");
+    unsigned char fla = 0xff & rand();
+    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+    setName( "trying to open a connection to the gateway ... ");
+    //read DO header
+    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
+    ui->label_3->setText("Requestest Slot" + QString::number(slo) + " and Index" + QString::number( ind));
     slo = res.first.at(res.second-3);
     ind = res.first.at(res.second-2);
     unsigned char list_views = res.first.at(res.second-1);
-    setName( "found" + QString::number(list_views) + "List views. List view 1 can be referenced by  Index" + QString::number(ind) + "and Slot" + QString::number(slo));
+    QList<QString> list = blockIdent.getBlockIdentity(2,1,1);
+    make_dynamic_table("tableWidget_2",6,1,{"block","slot","index","parent","class",""});
+    setName( "found" +list.first() + QString::number(list_views) + "List views. List view 1 can be referenced by  Index" + QString::number(ind) + "and Slot" + QString::number(slo));
+    insert_row_into_table("tableWidget_2",6,{list.at(2),QString::number(slo),QString::number(ind),list.at(1),list.at(0),"readValue"});
+    pointer = view;
     }
 
 }
@@ -268,7 +312,7 @@ MainWindow main;
 
 void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_device& dev){
     // static information first ( see page 124)
-
+    pointer=composite_directory;
     //Physical block
     int PB_num = int(input.first.at(4)) ;  //usually not required, because there's always exactly one PB
     int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
@@ -416,7 +460,7 @@ void MainWindow:: on_read_xml_clicked(){
     printf("reading fb1");
     unsigned char add = 6;  //address of first device
     unsigned char slo = 1;  //slot of directory object header
-    unsigned char ind = 100;
+    unsigned char ind = 80;
     srand(time(NULL));
     unsigned char fla = 0xff & rand();
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
