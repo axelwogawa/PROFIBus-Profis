@@ -223,6 +223,7 @@ MainWindow main;
 void MainWindow::requestHeader( int nRow, int nCol ) {
     if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
     else {
+        pointer=device;
         connect_value1=nRow;
         connect_value2=nCol;
         bool ok;
@@ -238,6 +239,7 @@ void MainWindow::requestHeader( int nRow, int nCol ) {
         //read DO header
         std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
         parse_doheader(res, default_device);
+        default_device.setId(add);
         make_dynamic_table("tableWidget_3",2,6,{"type","value"});
         insert_row_into_table("tableWidget_3",2,{"Device ID",QString::number(default_device.getId())});
         insert_row_into_table("tableWidget_3",2,{"Revision Number",QString::number(default_device.getRev_no())});
@@ -247,8 +249,8 @@ void MainWindow::requestHeader( int nRow, int nCol ) {
         insert_row_into_table("tableWidget_3",2,{"Number of Types", "" +QString::number(default_device.getNo_typ())});
         ui->label_5->setText("Header information of device " + add);
         ind =1;
-        pointer = composite_directory;
         res = readparam(socket_fd,fla, add, slo, ind);
+        printf("done");
         parse_composite_directory(res, default_device);
 
 
@@ -480,7 +482,26 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
     int TB_num = int(input.first.at(7))*pow(2,8) + int(input.first.at(8));
     int FB_num = int(input.first.at(11))*pow(2,8) + int(input.first.at(12));
     make_dynamic_table("tableWidget",5,FB_num+TB_num+PB_num,{"BlockType","Slot","Index","Parameters",""});
-    ui->label_2->setText("Composite Directory: SLOT 1 INDEX 1");
+     ui->label_2->setText("Composite Directory: SLOT 1 INDEX 1");
+    if (input.second <=13 ) {
+        bool ok;
+        unsigned char slo = 1;
+        unsigned char ind = 2;
+        srand(time(NULL));
+        unsigned char fla = 0xff & rand();
+        printf("f = %d, a = %d, s = %d, i = %d\n", fla, default_device.getAdd(), slo, ind);
+        setName( "trying to open a connection to the gateway ... ");
+        //read DO header
+       std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, default_device.getId(), slo, ind);
+       res.first.erase(res.first.begin()); // deletes the first element which is always a random tcp number only
+
+       std::vector<int> cheat;
+
+       cheat.reserve(input.second + res.second); // preallocate memory
+       cheat.insert( cheat.end(), input.first.begin(), input.first.end() );
+       cheat.insert( cheat.end(), res.first.begin(), res.first.end() );
+       input.first = cheat;
+   }
     dev.getPb().setDo_index(input.first.at(1));
     dev.getPb().setDo_offset(input.first.at(2));
     dev.getPb().setSlot(int(input.first.at(12+1)));
@@ -533,6 +554,7 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
     setName("Function Blocks = " + QString::number(FB_num));
 
     //insert_row_into_table(5,{"TB",QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()),"click here"});
+
 }
 
 /**
@@ -574,6 +596,8 @@ searchFieldBusDevices ();
 
 
 void MainWindow:: on_read_xml_clicked(){
+
+    /*
     QFile xml_file ("./Man_ID_Table_scaled.xml");
     if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
 
@@ -598,18 +622,16 @@ void MainWindow:: on_read_xml_clicked(){
         }
        // else {"starting element is: " + xml_reader.name();}
     }
-
-    printf("reading fb1");
-    unsigned char add = 6;  //address of first device
+*/
+    unsigned char add = 7;
     unsigned char slo = 1;  //slot of directory object header
-    unsigned char ind = 80;
+    unsigned char ind = 2;
     srand(time(NULL));
     unsigned char fla = 0xff & rand();
-    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-    setName( "trying to open a connection to the gateway ... ");
-
-    //read DO header
-    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
+    printf("f = %d, a = %d, s = %d, i = %d\n", fla, slo, ind);
+   // setName( "trying to open a connection to the gateway ... ");
+    socket_fd = create_socket();
+        std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
 }
 
 
