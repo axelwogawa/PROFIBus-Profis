@@ -12,5 +12,22 @@ Slot - Index - Objekt - Beschreibung (Profile-PA-Devices_3042_V301_Dec04.PDF)
 ---------------------------------------------------------------------
 1 - 0 - Directory Object Header - S. 42f., 122 ff.
 1 - 1 - Directory Object  - S. 124
-? - ? - Block structure - S. 45ff.
-
+Standard Block Parameters - S. 38ff.
+Block structure - S. 45ff.
+Data Types - S. 44
+PB - S. 86
+Units - S. 96ff.
+AI-FB - S. 154
+Totalizer-FB - S. 159
+Temp-TB - S. 170
+Pressure-TB - S. 182
+Level-TB - S. 193
+Flow-TB - S. 201
+DI-PB - S. 215
+DI-FB - S. 215
+DI-TB - S. 220
+DO-PB
+DO-TB
+DO-FB
+Actuator
+Analyser

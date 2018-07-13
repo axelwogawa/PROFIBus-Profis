@@ -24,6 +24,7 @@
 #include <QXmlStreamReader>
 #include <QApplication>
 #include <blockidentifier.h>
+#include <parser.h>
 
 // #### global variable definitions #######
  QString console = "";
@@ -33,6 +34,9 @@
  int connect_value2 =0;
  enum currentAction{header,composite_directory,view,data};
  currentAction pointer;
+
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -41,10 +45,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
 
 void MainWindow::setName(const QString &name)
  {
@@ -125,8 +133,6 @@ std::pair<std::vector<int>, int> readparam (int iSockFd, unsigned char flag, uns
 
 
 
-
-
 void MainWindow::make_dynamic_table (QString tableWidget,int coloumns,int row, QStringList coloumn_names) {
    QTableWidget* table;
     if (0== QString::compare(tableWidget, "tableWidget", Qt::CaseInsensitive)) {
@@ -147,6 +153,8 @@ void MainWindow::make_dynamic_table (QString tableWidget,int coloumns,int row, Q
     table->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     table->setStyleSheet("background:#778899;");
 }
+
+
 
 void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringList coloumn_names){
     QTableWidget* table;
@@ -174,6 +182,9 @@ void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringL
     table->adjustSize();
     table->show();
 }
+
+
+
 void MainWindow::requestValues(int nRow, int nCol){
 
     if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
@@ -198,49 +209,115 @@ void MainWindow::requestValues(int nRow, int nCol){
     // regarding to page 52:  Data Type 101 consists of 4 Byte value + 1 byte status
     int status = res.first.at(res.second-1);
     int value = res.first.at(res.second-5) + res.first.at(res.second-4) + res.first.at(res.second-3) + res.first.at(res.second-2);
-    setName("Value of FB1: " + QString::number(value));
+    setName("Value of FB: " + QString::number(value));
     }
-
-
 }
+
 
 
 void MainWindow::requestParameters(int nRow, int nCol){
     blockIdentifier blockIdent;
     if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
-    else {
+    else
+    {
+        setName("Row" + QString::number(nRow) + "and Coloumn: " + QString::number(nCol) + "was clicked");
+        // to be continued here !
 
-    setName("Row" + QString::number(nRow) + "and Coloumn: " + QString::number(nCol) + "was clicked");
-    // to be continued here !
-    connect_value1=nRow;
-    connect_value2=nCol;
-    pointer = view;
-    unsigned char add = 6;  //address of first device
-    bool ok;
-    unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
-    unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
-    srand(time(NULL));
-    printf("clickedadasdasdasdsad");
-    unsigned char fla = 0xff & rand();
-    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-    setName( "trying to open a connection to the gateway ... ");
-    //read DO header
-    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
-    ui->label_3->setText("Requestest Slot" + QString::number(slo) + " and Index" + QString::number( ind));
-    slo = res.first.at(res.second-3);
-    ind = res.first.at(res.second-2);
-    unsigned char list_views = res.first.at(res.second-1);
-    //printf("2= %d,1= %d,1= %d ",res.first.at(1),res.first.at(2),res.first.at(3));
+        //request block object
+        connect_value1=nRow;
+        connect_value2=nCol;
+        pointer = view;
+        unsigned char add = 6;  //address of first device
+        bool ok;
+        unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
+        unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
+        srand(time(NULL));
+        printf("clickedadasdasdasdsad");
+        unsigned char fla = 0xff & rand();
+        printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+        setName( "trying to open a connection to the gateway ... ");
+        std::pair<std::vector<int>, int> blockObj = readparam(socket_fd,fla, add, slo, ind);
+        //interpret block object content
+        QList<QString> list = blockIdent.getBlockIdentity(blockObj.first.at(2),blockObj.first.at(3),blockObj.first.at(4));
 
-   QList<QString> list = blockIdent.getBlockIdentity(res.first.at(2),res.first.at(3),res.first.at(4));
-// QList<QString> list = blockIdent.getBlockIdentity(2,1,1);
-    make_dynamic_table("tableWidget_2",6,1,{"block","slot","index","parent","class",""});
+        QList<QPair<QString,QString>> addParams;
 
-    setName( "found" +list.first() + QString::number(list_views) + "List views. List view 1 can be referenced by  Index" + QString::number(ind) + "and Slot" + QString::number(slo));
-    insert_row_into_table("tableWidget_2",6,{list.at(2),QString::number(slo),QString::number(ind),list.at(1),list.at(0),"readValue"});
-    pointer = view;
+        //request standard param "mode" (rel. idx. 6)
+        srand(time(NULL));
+        fla = 0xff & rand();
+        std::pair<std::vector<int>, int> mode = readparam(socket_fd,fla, add, slo, ind+6);
+        //parse mode
+        //add result to additionalParams
+
+        //request standard param "alarms" (rel. idx. 7)
+        srand(time(NULL));
+        fla = 0xff & rand();
+        std::pair<std::vector<int>, int> alarms = readparam(socket_fd,fla, add, slo, ind+7);
+        //parse alarms
+        //add result to additionalParams
+
+        //request PB params
+        if (list.at(2).compare("PB") == 0)
+        {
+            //request standard param "manID" (rel. idx. 10)
+            srand(time(NULL));
+            fla = 0xff & rand();
+            std::pair<std::vector<int>, int> val = readparam(socket_fd,fla, add, slo, ind+10);
+            //parse manID (using xml)
+            //add result to additionalParams
+
+            //request standard param "DevID" (rel. idx. 11)
+            srand(time(NULL));
+            fla = 0xff & rand();
+            val = readparam(socket_fd,fla, add, slo, ind+11);
+            //parse DevID
+            //add result to additionalParams
+        }
+        else if (list.at(2).compare("FB") == 0)
+        {
+            //request standard param "OUT" (rel. idx. 10)
+            srand(time(NULL));
+            fla = 0xff & rand();
+            std::pair<std::vector<int>, int> val = readparam(socket_fd,fla, add, slo, ind+10);
+            val.first.erase(val.first.begin());
+            float value = Parser::Float101toFloat(val.first);
+            QPair<QString,QString> res("Output-Value",QString::number(value));
+            addParams.append(res);
+//            int status = val.first.at(val.second-1);
+
+            //request standard param "scale" (rel. idx. 12)
+            srand(time(NULL));
+            fla = 0xff & rand();
+            printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+            val = readparam(socket_fd,fla, add, slo, ind+12);
+            val.first.erase(val.first.begin());
+            res.first = "Unit";
+            res.second = Parser::parseDS36Unit(val.first);
+            addParams.append(res);
+        }
+
+
+        //print results
+        ui->label_3->setText("Requested Slot " + QString::number(slo) + " and Index " + QString::number(ind));
+        unsigned char list_views = blockObj.first.at(blockObj.second-1);
+        //printf("2= %d,1= %d,1= %d ",blockObj.first.at(1),blockObj.first.at(2),blockObj.first.at(3));
+        //make_dynamic_table("tableWidget_2",6,1,{"block","slot","index","parent","class",""});
+        make_dynamic_table("tableWidget_2",2,5+addParams.size(),{"Parameter","Value"});
+
+        setName("found " + list.first() + QString::number(list_views) + " List views. List view 1 can be referenced by Index " + QString::number(ind) + " and Slot " + QString::number(slo));
+        //insert_row_into_table("tableWidget_2",6,{list.at(2),QString::number(blockObj.first.at(blockObj.second-3)),QString::number(blockObj.first.at(blockObj.second-2)),list.at(1),list.at(0),"readValue"});
+        insert_row_into_table("tableWidget_2",2,{"Block Type",list.at(2)});
+        insert_row_into_table("tableWidget_2",2,{"View Slot",QString::number(blockObj.first.at(blockObj.second-3))});
+        insert_row_into_table("tableWidget_2",2,{"View Index",QString::number(blockObj.first.at(blockObj.second-2))});
+        insert_row_into_table("tableWidget_2",2,{"Parent Class",list.at(1)});
+        insert_row_into_table("tableWidget_2",2,{"Subclass",list.at(0)});
+
+        for(int i = 0; i < addParams.size(); i++)
+        {
+            insert_row_into_table("tableWidget_2",2,{addParams.at(i).first,addParams.at(i).second});
+        }
+        pointer = view;
     }
-
 }
 
 
@@ -249,6 +326,7 @@ void MainWindow::connectGateway()
 {
 //    ui->gateway_connect->click();
 }
+
 
 int MainWindow::create_socket() {
    setName ( "entering parameterread... " );
@@ -308,12 +386,12 @@ MainWindow main;
     }
 }
 
+
 //---parse_composite_directory doc---
 //function interpreting all given values by input array of slot 1 index 1 request
 //input:    value pair:
 //          first - received bytes in an array of length 1024
 //          second - number of received bytes
-
 void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_device& dev){
     // static information first ( see page 124)
     pointer=composite_directory;
@@ -425,14 +503,13 @@ void MainWindow::on_gateway_connect_clicked()
 void MainWindow::on_composite_list_directory_clicked(){    
 }
 
+
 void MainWindow::on_disconnect_gateway_clicked(){ // do not get confused by the name. this button was originally made to handle a disconnect from the gateway
     setName( "disconnect gateway was clicked" );
 }
 
+
 void MainWindow:: on_read_xml_clicked(){
-
-
-
     QFile xml_file ("/Man_ID_Table_scaled.xml");
     if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
 
@@ -453,9 +530,6 @@ void MainWindow:: on_read_xml_clicked(){
                  }else {
                      setName (QString:: number( xml_reader.attributes().value("ID").toInt()));
                  }
-
-
-
              } setName("ENd of if ");
         }
        // else {"starting element is: " + xml_reader.name();}
@@ -470,7 +544,6 @@ void MainWindow:: on_read_xml_clicked(){
     printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
     setName( "trying to open a connection to the gateway ... ");
 
-
     //read DO header
     std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
 }
@@ -478,38 +551,12 @@ void MainWindow:: on_read_xml_clicked(){
 
 void parse_PB(std::pair<std::vector<int>, int>& input, Dp_device& dev){
 
-    //parse device class
-    switch(input.first.at(3)) {
-    case 1:
-        dev.getPb().setCls("Transmitter");
-        break;
-    case 2:
-        dev.getPb().setCls("Actuator");
-        break;
-    case 3:
-        dev.getPb().setCls("Discrete I/O");
-        break;
-    case 4:
-        dev.getPb().setCls("Controller");
-        break;
-    case 5:
-        dev.getPb().setCls("Analyser");
-        break;
-    case 6:
-        dev.getPb().setCls("Lab Device");
-        break;
-    default:
-        if(input.first.at(3)>=128 && input.first.at(3) <= 249)
-            dev.getPb().setCls("vendor specific");
-        else
-            dev.getPb().setCls("unknown");
-        break;
-    }
 
     //parse block view address
     dev.getPb().setView_slot(int(input.first.at(18)));
     dev.getPb().setView_index(int(input.first.at(19)));
 }
+
 
 void MainWindow::on_readPb_clicked()
 {

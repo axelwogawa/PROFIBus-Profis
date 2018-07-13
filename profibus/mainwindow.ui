@@ -133,9 +133,12 @@
      <rect>
       <x>570</x>
       <y>480</y>
-      <width>601</width>
-      <height>201</height>
+      <width>431</width>
+      <height>231</height>
      </rect>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContents</enum>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -171,7 +174,7 @@
      <x>0</x>
      <y>0</y>
      <width>1202</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

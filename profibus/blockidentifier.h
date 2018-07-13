@@ -12,6 +12,10 @@ public:
     QList<QString> get_AI_ClassFB(int classNumber);
     QList<QString> getParentClassTB(  int parentClass, int classNumber);
     QList<QString> get_Control_ClassFB(int classNumber);
+    QList<QString> getParentClassPB(int parentClass, int classNumber);
+    QList<QString> getChildClassTBPress(int classNumber);
+    QList<QString> getChildClassTBTemp(int classNumber);
+    QList<QString> getChildClassTBDummy(int classNumber);
 };
 
 #endif // BLOCKIDENTIFIER_H
