@@ -25,17 +25,15 @@ void insertThreeIntoTableRow(QString item1, QString item2,QString item3);
 void parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_device& device);
 void make_dynamic_table (QString tableWidget,int coloumns,int row, QStringList coloumn_names);
 void insert_row_into_table(QString tableWidget,int coloumns,QStringList coloumn_names);
+void searchFieldBusDevices ();
 
 private slots:
-void on_disconnect_gateway_clicked();
+
 void on_gateway_connect_clicked();
 void on_read_xml_clicked();
-void on_composite_list_directory_clicked();
-void requestParameters(int,int);
-void requestValues( int, int ) ;
-
-
-void on_readPb_clicked();
+void requestValues(int nRow, int nCol);
+void requestParameters(int nRow, int nCol);
+void requestHeader( int, int ) ;
 
 private:
     Ui::MainWindow *ui;

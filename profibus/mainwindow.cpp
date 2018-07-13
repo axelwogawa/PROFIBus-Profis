@@ -32,7 +32,8 @@
  int socket_fd;
  int connect_value1 =0; // needed to compare weather the clicked cell has changed or not
  int connect_value2 =0;
- enum currentAction{header,composite_directory,view,data};
+ enum currentAction{device,header,composite_directory,view,data};
+// enum tableWidget{tableWidget_0,tableWidget_1,tableWidget_2,tableWidget_3} if we have too much time
  currentAction pointer;
 
 
@@ -141,6 +142,12 @@ void MainWindow::make_dynamic_table (QString tableWidget,int coloumns,int row, Q
     else if (0== QString::compare(tableWidget, "tableWidget_2", Qt::CaseInsensitive)){
         table =  ui->tableWidget_2;
     }
+    else if (0== QString::compare(tableWidget, "tableWidget_0", Qt::CaseInsensitive)){
+        table =  ui->tableWidget_0;
+    }
+    else if (0== QString::compare(tableWidget, "tableWidget_3", Qt::CaseInsensitive)){
+        table =  ui->tableWidget_3;
+    }
     table->clear();
     table->setRowCount(row);
     table->setColumnCount(coloumns);
@@ -164,18 +171,33 @@ void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringL
      else if (0== QString::compare(tableWidget, "tableWidget_2", Qt::CaseInsensitive)){
          table =  ui->tableWidget_2;
      }
+     else if (0== QString::compare(tableWidget, "tableWidget_0", Qt::CaseInsensitive)){
+         table =  ui->tableWidget_0;
+     }
+     else if (0== QString::compare(tableWidget, "tableWidget_3", Qt::CaseInsensitive)){
+         table =  ui->tableWidget_3;
+     }
     int column = table->currentColumn();
     int row = table->currentRow();
     for (int i=0;i<coloumns;i++){
     table->setItem(row, column+i, new QTableWidgetItem(coloumn_names.at(i)));
     }
-    if (pointer==composite_directory) {
-    connect(table, SIGNAL( cellDoubleClicked (int, int) ),
-     this, SLOT( requestParameters( int, int ) ) );}
 
-    if (pointer==view) {
-    connect(table, SIGNAL( cellDoubleClicked (int, int) ),
-     this, SLOT( requestValues( int, int ) ) );}
+    switch (pointer) {
+    case device: connect(table, SIGNAL( cellDoubleClicked (int, int) ),
+                         this, SLOT(requestHeader( int, int ) ) );
+        break;
+    case composite_directory: connect(table, SIGNAL( cellDoubleClicked (int, int) ),
+                                      this, SLOT( requestParameters( int, int ) ) );
+        break;
+    case  view: connect(table, SIGNAL( cellDoubleClicked (int, int) ),
+                       this, SLOT( requestValues( int, int ) ) );
+        break;
+
+    default:
+        break;
+    }
+
 
     table->setSortingEnabled(false);
     table->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
@@ -183,8 +205,56 @@ void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringL
     table->show();
 }
 
+void parse_doheader(std::pair<std::vector<int>, int>& input, Dp_device& new_device){
+MainWindow main;
+    if (input.second == 13)
+    {
+        printf("% 3d"+ input.first.at(12));
+        new_device.setId ( ( (int)input.first.at(1))*pow(2,8) + (int)input.first.at(2)) ;
+        new_device.setRev_no(((int)input.first.at(3))*pow(2,8) + (int)input.first.at(4));
+        new_device.setNo_do(((int)input.first.at(5))*pow(2,8) + (int)input.first.at(6));
+        new_device.setNo_obj(((int)input.first.at(7))*pow(2,8) + (int)input.first.at(8));
+        new_device.setFst_idx(((int)input.first.at(9))*pow(2,8) + (int)input.first.at(10));
+        new_device.setNo_typ(((int)input.first.at(11))*pow(2,8) + (int)input.first.at(12));
+    }
+}
 
 
+void MainWindow::requestHeader( int nRow, int nCol ) {
+    if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
+    else {
+        connect_value1=nRow;
+        connect_value2=nCol;
+        bool ok;
+        printf("requesting row = %d",nRow);
+         unsigned char add = (ui->tableWidget_0->item(nRow,0)->text()).toInt(&ok,10);
+
+        unsigned char slo = 1;
+        unsigned char ind = 0; //(ui->tableWidget_2->item(nRow,2)->text()).toInt(&ok,10);
+        srand(time(NULL));
+        unsigned char fla = 0xff & rand();
+        printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+        setName( "trying to open a connection to the gateway ... ");
+        //read DO header
+        std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
+        parse_doheader(res, default_device);
+        make_dynamic_table("tableWidget_3",2,6,{"type","value"});
+        insert_row_into_table("tableWidget_3",2,{"Device ID",QString::number(default_device.getId())});
+        insert_row_into_table("tableWidget_3",2,{"Revision Number",QString::number(default_device.getRev_no())});
+        insert_row_into_table("tableWidget_3",2,{"Number of Directory Objects", QString::number(default_device.getNo_do())});
+        insert_row_into_table("tableWidget_3",2,{"Number of Objects", "" +QString::number(default_device.getNo_obj())});
+        insert_row_into_table("tableWidget_3",2,{"Index of First Object", "" +QString::number(default_device.getFst_idx())});
+        insert_row_into_table("tableWidget_3",2,{"Number of Types", "" +QString::number(default_device.getNo_typ())});
+        ui->label_5->setText("Header information of device " + add);
+        ind =1;
+        pointer = composite_directory;
+        res = readparam(socket_fd,fla, add, slo, ind);
+        parse_composite_directory(res, default_device);
+
+
+
+    }
+}
 void MainWindow::requestValues(int nRow, int nCol){
 
     if ((nRow == connect_value1) &&(nCol== connect_value2)) {}
@@ -395,19 +465,6 @@ int MainWindow::create_socket() {
 //input:    value pair:
 //          first - received bytes in an array of length 1024
 //          second - number of received bytes
-void parse_doheader(std::pair<std::vector<int>, int>& input, Dp_device& new_device){
-MainWindow main;
-    if (input.second == 13)
-    {
-        printf("% 3d"+ input.first.at(12));
-        new_device.setId ( ( (int)input.first.at(1))*pow(2,8) + (int)input.first.at(2)) ;
-        new_device.setRev_no(((int)input.first.at(3))*pow(2,8) + (int)input.first.at(4));
-        new_device.setNo_do(((int)input.first.at(5))*pow(2,8) + (int)input.first.at(6));
-        new_device.setNo_obj(((int)input.first.at(7))*pow(2,8) + (int)input.first.at(8));
-        new_device.setFst_idx(((int)input.first.at(9))*pow(2,8) + (int)input.first.at(10));
-        new_device.setNo_typ(((int)input.first.at(11))*pow(2,8) + (int)input.first.at(12));
-    }
-}
 
 
 //---parse_composite_directory doc---
@@ -478,58 +535,42 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
     //insert_row_into_table(5,{"TB",QString::number(fb.getSlot()),QString::number(fb.getIndex()),QString::number(fb.getNo_params()),"click here"});
 }
 
-
-
-void MainWindow::on_gateway_connect_clicked()
-{
-    setName("#################################");
-    setName( "gateway connect was entered... " );
-    //TODO: maybe we can loop through addresses 0 to 255 or so instead of hardcoding addresses
-    unsigned char add = 6;  //address of first device
+/**
+ @docbookonly function to loop through the address space of a connected profibus appikation.
+    The answer returned by the device should contain exactly 13 Byte which represent the header
+**/
+void MainWindow::searchFieldBusDevices (){
+    QList<int>  devices;
     unsigned char slo = 1;  //slot of directory object header
     unsigned char ind = 0;
     srand(time(NULL));
     unsigned char fla = 0xff & rand();
-    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-    setName( "trying to open a connection to the gateway ... ");
+    printf("f = %d, a = %d, s = %d, i = %d\n", fla, slo, ind);
+   // setName( "trying to open a connection to the gateway ... ");
     socket_fd = create_socket();
 
-    //read DO header
-    std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
-    setName( "established connection" );
-    setName( "starting to interpret ..." );
-    parse_doheader(res, default_device);
-    setName("\n");
-    setName("#################################");
-    setName("please press details to see device details");
-    //print DO read results
+    for (int i =0; i<128; i++){
 
-    //read DO object
-    setName("#################################");
-    setName( "composite list is requested" );
-    printf("composite");
-    srand(time(NULL));
-    fla = 0xff & rand();
-    ind = 1;
-    res = readparam(socket_fd,fla, add, slo, ind);
-    parse_composite_directory(res, default_device);
-    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-    setName("done ... ");
-    ui->gateway_connect->setStyleSheet("background-color: green;");
-    ui->gateway_connect->setText("connected");
+        std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, i, slo, ind);
+        if (res.second ==13)
+        {
+           devices.append(i);
+           setName(QString::number(i));
+        }
 
-
-    //create drop down menus for buttons "read TB", "read FB"
+    }
+   make_dynamic_table("tableWidget_0",2,devices.size(),{"Address",""});
+    for (int i=0;i<devices.size();i++){
+        insert_row_into_table("tableWidget_0",2,{QString::number(devices.at(i)),"examine"});
+    }
 }
 
-
-void MainWindow::on_composite_list_directory_clicked(){    
+void MainWindow::on_gateway_connect_clicked()
+{
+pointer = device;
+searchFieldBusDevices ();
 }
 
-
-void MainWindow::on_disconnect_gateway_clicked(){ // do not get confused by the name. this button was originally made to handle a disconnect from the gateway
-    setName( "disconnect gateway was clicked" );
-}
 
 
 void MainWindow:: on_read_xml_clicked(){
@@ -580,7 +621,7 @@ void parse_PB(std::pair<std::vector<int>, int>& input, Dp_device& dev){
     dev.getPb().setView_index(int(input.first.at(19)));
 }
 
-
+/*
 void MainWindow::on_readPb_clicked()
 {
     srand(time(NULL));
@@ -592,3 +633,4 @@ void MainWindow::on_readPb_clicked()
     parse_PB(input, default_device);
     //show results
 }
+*/

@@ -6,19 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1202</width>
-    <height>770</height>
+    <width>1461</width>
+    <height>958</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1461</width>
+    <height>958</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(222, 219, 219);
+font: 57 italic 11pt &quot;Ubuntu&quot;;</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="gateway_connect">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>120</y>
+      <x>40</x>
+      <y>180</y>
       <width>181</width>
       <height>41</height>
      </rect>
@@ -26,65 +36,35 @@
     <property name="mouseTracking">
      <bool>false</bool>
     </property>
-    <property name="text">
-     <string>device1_connect</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>270</y>
-      <width>181</width>
-      <height>41</height>
-     </rect>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(169, 169, 169);</string>
     </property>
     <property name="text">
-     <string>readTemperature</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="readPb">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>220</y>
-      <width>181</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Read Physical Block</string>
+     <string>detect_bus_devices</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>340</y>
-      <width>431</width>
-      <height>361</height>
+      <x>200</x>
+      <y>550</y>
+      <width>871</width>
+      <height>221</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QPushButton" name="disconnect_gateway">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>140</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>device_details</string>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>60</y>
-      <width>601</width>
+      <x>560</x>
+      <y>200</y>
+      <width>551</width>
       <height>301</height>
      </rect>
     </property>
@@ -92,49 +72,26 @@
    <widget class="QPushButton" name="read_xml">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>70</y>
-      <width>121</width>
-      <height>31</height>
+      <x>40</x>
+      <y>120</y>
+      <width>181</width>
+      <height>41</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(169, 169, 169);</string>
     </property>
     <property name="text">
      <string>read_xml</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="composite_list_directory">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>170</y>
-      <width>181</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>composite_list_directory</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>-10</y>
-      <width>191</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>ProfiBus Demonstrator</string>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="tableWidget_2">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>380</y>
-      <width>431</width>
-      <height>331</height>
+      <x>1170</x>
+      <y>200</y>
+      <width>231</width>
+      <height>301</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -150,27 +107,109 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>30</y>
+      <x>560</x>
+      <y>170</y>
       <width>371</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Select a device to see content here!</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>360</y>
+      <x>1040</x>
+      <y>170</y>
       <width>421</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Select a block to see content here</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>1371</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(169, 169, 169);
+border-bottom-color: rgb(136, 138, 133);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>0</y>
+       <width>671</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 57 italic 48pt &quot;Ubuntu&quot;;</string>
+     </property>
+     <property name="text">
+      <string>ProfiBus Demonstrator</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget_0">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>300</y>
+      <width>221</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>270</y>
+      <width>241</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Found devices</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>200</y>
+      <width>256</width>
+      <height>301</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>170</y>
+      <width>251</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Header Information</string>
     </property>
    </widget>
   </widget>
@@ -179,8 +218,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1202</width>
-     <height>25</height>
+     <width>1461</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
