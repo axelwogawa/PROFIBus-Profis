@@ -16,6 +16,7 @@ public:
     QList<QString> getChildClassTBPress(int classNumber);
     QList<QString> getChildClassTBTemp(int classNumber);
     QList<QString> getChildClassTBDummy(int classNumber);
+    QList<QString> get_ChildClassFBAux(int classNumber);
 };
 
 #endif // BLOCKIDENTIFIER_H

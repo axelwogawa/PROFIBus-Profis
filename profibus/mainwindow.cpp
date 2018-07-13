@@ -246,15 +246,16 @@ void MainWindow::requestParameters(int nRow, int nCol){
         srand(time(NULL));
         fla = 0xff & rand();
         std::pair<std::vector<int>, int> mode = readparam(socket_fd,fla, add, slo, ind+6);
-        //parse mode
-        //add result to additionalParams
+        QPair<QString,QString> res("Actual Mode", Parser::ActMode(mode.first.at(1)));
+        addParams.append(res);
 
         //request standard param "alarms" (rel. idx. 7)
         srand(time(NULL));
         fla = 0xff & rand();
         std::pair<std::vector<int>, int> alarms = readparam(socket_fd,fla, add, slo, ind+7);
-        //parse alarms
-        //add result to additionalParams
+        res.first = "Alarms";
+        res.second = Parser::ActAlarm(alarms.first.at(1));
+        addParams.append(res);
 
         //request PB params
         if (list.at(2).compare("PB") == 0)
@@ -263,39 +264,64 @@ void MainWindow::requestParameters(int nRow, int nCol){
             srand(time(NULL));
             fla = 0xff & rand();
             std::pair<std::vector<int>, int> val = readparam(socket_fd,fla, add, slo, ind+10);
-            //parse manID (using xml)
-            //add result to additionalParams
+            val.first.erase(val.first.begin());
+            int manId = Parser::US16toInt(val.first);
+            //TODO: parse manID (using xml)
+            res.first = "Manufacturer";
+            res.second = QString::number(manId);    //replace this with the manufacturer name String
+            addParams.append(res);
 
             //request standard param "DevID" (rel. idx. 11)
             srand(time(NULL));
             fla = 0xff & rand();
             val = readparam(socket_fd,fla, add, slo, ind+11);
-            //parse DevID
-            //add result to additionalParams
+            val.first.erase(val.first.begin());
+            res.first = "Device Name";
+            res.second = Parser::VisibleStringToString(val.first);    //not sure, how to interpret Visible String --> this function reads only gibberish
+            addParams.append(res);
         }
         else if (list.at(2).compare("FB") == 0)
         {
-            //request standard param "OUT" (rel. idx. 10)
-            srand(time(NULL));
-            fla = 0xff & rand();
-            std::pair<std::vector<int>, int> val = readparam(socket_fd,fla, add, slo, ind+10);
-            val.first.erase(val.first.begin());
-            float value = Parser::Float101toFloat(val.first);
-            QPair<QString,QString> res("Output-Value",QString::number(value));
-            addParams.append(res);
-//            int status = val.first.at(val.second-1);
+            if (list.at(1).compare("Input") == 0 || list.at(1).compare("Output") == 0 || list.at(1).compare("Calculation") == 0){
+                //request standard param "OUT" (rel. idx. 10)
+                srand(time(NULL));
+                fla = 0xff & rand();
+                std::pair<std::vector<int>, int> val = readparam(socket_fd,fla, add, slo, ind+10);
+                val.first.erase(val.first.begin());
+                float value = Parser::Float101toFloat(val.first);
+                res.first = "Output Value";
+                res.second = QString::number(value);
+                addParams.append(res);
+                //interpret value status
+                res.first = "Value Status";
+                res.second = Parser::Float101Status(val.first.at(4));
+                addParams.append(res);
 
-            //request standard param "scale" (rel. idx. 12)
-            srand(time(NULL));
-            fla = 0xff & rand();
-            printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
-            val = readparam(socket_fd,fla, add, slo, ind+12);
-            val.first.erase(val.first.begin());
-            res.first = "Unit";
-            res.second = Parser::parseDS36Unit(val.first);
-            addParams.append(res);
+                //request engineering unit
+                if (list.at(0).compare("Analog") == 0) {
+                    //request standard param "scale" (rel. idx. 12)
+                    srand(time(NULL));
+                    fla = 0xff & rand();
+                    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+                    val = readparam(socket_fd,fla, add, slo, ind+12);
+                    val.first.erase(val.first.begin());
+                    res.first = "Unit";
+                    res.second = Parser::parseDS36Unit(val.first);
+                    addParams.append(res);
+                }
+                else if (list.at(0).compare("Totaliser") == 0) {
+                    //request standard param "unit" (rel. idx. 11)
+                    srand(time(NULL));
+                    fla = 0xff & rand();
+                    printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+                    val = readparam(socket_fd,fla, add, slo, ind+11);
+                    val.first.erase(val.first.begin());
+                    res.first = "Unit";
+                    res.second = Parser::parseUnitId(Parser::US16toInt(val.first));
+                    addParams.append(res);
+                }
+            }
         }
-
 
         //print results
         ui->label_3->setText("Requested Slot " + QString::number(slo) + " and Index " + QString::number(ind));
@@ -303,7 +329,6 @@ void MainWindow::requestParameters(int nRow, int nCol){
         //printf("2= %d,1= %d,1= %d ",blockObj.first.at(1),blockObj.first.at(2),blockObj.first.at(3));
         //make_dynamic_table("tableWidget_2",6,1,{"block","slot","index","parent","class",""});
         make_dynamic_table("tableWidget_2",2,5+addParams.size(),{"Parameter","Value"});
-
         setName("found " + list.first() + QString::number(list_views) + " List views. List view 1 can be referenced by Index " + QString::number(ind) + " and Slot " + QString::number(slo));
         //insert_row_into_table("tableWidget_2",6,{list.at(2),QString::number(blockObj.first.at(blockObj.second-3)),QString::number(blockObj.first.at(blockObj.second-2)),list.at(1),list.at(0),"readValue"});
         insert_row_into_table("tableWidget_2",2,{"Block Type",list.at(2)});
@@ -311,7 +336,6 @@ void MainWindow::requestParameters(int nRow, int nCol){
         insert_row_into_table("tableWidget_2",2,{"View Index",QString::number(blockObj.first.at(blockObj.second-2))});
         insert_row_into_table("tableWidget_2",2,{"Parent Class",list.at(1)});
         insert_row_into_table("tableWidget_2",2,{"Subclass",list.at(0)});
-
         for(int i = 0; i < addParams.size(); i++)
         {
             insert_row_into_table("tableWidget_2",2,{addParams.at(i).first,addParams.at(i).second});
@@ -375,7 +399,6 @@ void parse_doheader(std::pair<std::vector<int>, int>& input, Dp_device& new_devi
 MainWindow main;
     if (input.second == 13)
     {
-
         printf("% 3d"+ input.first.at(12));
         new_device.setId ( ( (int)input.first.at(1))*pow(2,8) + (int)input.first.at(2)) ;
         new_device.setRev_no(((int)input.first.at(3))*pow(2,8) + (int)input.first.at(4));
@@ -510,7 +533,7 @@ void MainWindow::on_disconnect_gateway_clicked(){ // do not get confused by the 
 
 
 void MainWindow:: on_read_xml_clicked(){
-    QFile xml_file ("/Man_ID_Table_scaled.xml");
+    QFile xml_file ("./Man_ID_Table_scaled.xml");
     if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
 
           setName("ERROR: cannot read file ...");

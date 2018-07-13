@@ -23,8 +23,8 @@ QList<QString> blockIdentifier::getBlockIdentity (int blocknumber, int parent_cl
 
         break;
     case 3:
-     identityList.append("TB");
-    // to be continued here
+        identityList = getParentClassTB(parent_class_number,class_number);
+        identityList.append("TB");
         break;
 
     default:
@@ -50,16 +50,16 @@ QList<QString> blockIdentifier::getParentClassFB(  int parentClass, int classNum
     case 3:   list = get_Control_ClassFB(classNumber);
         list.append("Control");
         break;
-    case 4:   list = get_AI_ClassFB(classNumber);
+    case 4:   list.append("Advanced Control");
         list.append( "Advanced Control");
         break;
-    case 5:   list = get_AI_ClassFB(classNumber);
+    case 5:   list.append("Totaliser");
         list.append( "Calculation");
         break;
-    case 6: list = get_AI_ClassFB(classNumber);
+    case 6: list = get_ChildClassFBAux(classNumber);
         list.append( "Auxiliary");
         break;
-    case 7:list = get_AI_ClassFB(classNumber);
+    case 7:list.append("reserved");
         list.append( "Alert");
         break;
 
@@ -94,14 +94,31 @@ QList<QString> blockIdentifier::get_Control_ClassFB(int classNumber){
 QList<QString> blockIdentifier::get_AI_ClassFB(int classNumber){
     QList<QString> identityList;
     switch (classNumber) {
-    case 1: identityList.append("Analog Input");
+    case 1: identityList.append("Analog");
          printf("%3d",identityList.size());
          return identityList;
         break;
-    case 2: identityList.append("Discrete Input");
+    case 2: identityList.append("Discrete");
         break;
 
   default:identityList.append("special");
+        break;
+    }
+
+    return identityList;
+}
+
+
+QList<QString> blockIdentifier::get_ChildClassFBAux(int classNumber){
+    QList<QString> identityList;
+    switch (classNumber) {
+    case 1: identityList.append("Ramp");
+        break;
+    case 2: identityList.append("BM Logbook");
+        break;
+    case 3: identityList.append("Sample");
+        break;
+  default:identityList.append("reserved");
         break;
     }
 
