@@ -25,6 +25,10 @@
 #include <QApplication>
 #include <blockidentifier.h>
 #include <parser.h>
+#include <qdir.h>
+#include <QFileDialog>
+
+
 
 // #### global variable definitions #######
  QString console = "";
@@ -35,6 +39,7 @@
  enum currentAction{device,header,composite_directory,view,data};
 // enum tableWidget{tableWidget_0,tableWidget_1,tableWidget_2,tableWidget_3} if we have too much time
  currentAction pointer;
+ std::pair<QList<int> , QList<QString>> manufacturers;
 
 
 
@@ -304,7 +309,6 @@ void MainWindow::requestParameters(int nRow, int nCol){
         unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
         unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
         srand(time(NULL));
-        printf("clickedadasdasdasdsad");
         unsigned char fla = 0xff & rand();
         printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
         setName( "trying to open a connection to the gateway ... ");
@@ -340,7 +344,7 @@ void MainWindow::requestParameters(int nRow, int nCol){
             int manId = Parser::US16toInt(val.first);
             //TODO: parse manID (using xml)
             res.first = "Manufacturer";
-            res.second = QString::number(manId);    //replace this with the manufacturer name String
+            res.second = searchManufacturerById(manId);    //replace this with the manufacturer name String
             addParams.append(res);
 
             //request standard param "DevID" (rel. idx. 11)
@@ -594,44 +598,55 @@ searchFieldBusDevices ();
 }
 
 
-
+QString MainWindow::searchManufacturerById(int manufacturer_ID){
+    QString manufacturer_name;
+    int group = manufacturers.first.size();
+    for( int i = 0; i< group;i++){
+        if (manufacturers.first.at(i)==manufacturer_ID){
+           manufacturer_name = manufacturers.second.at(i);
+            printf("found the  manufacturer");
+        }
+    }
+    printf("returnung manufacturer by name %s",manufacturer_name);
+    return manufacturer_name;
+}
 void MainWindow:: on_read_xml_clicked(){
 
-    /*
-    QFile xml_file ("./Man_ID_Table_scaled.xml");
-    if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
+    QString filename =  QFileDialog::getOpenFileName(
+             this,"Open Document",QDir::currentPath(),"All files (*.*) ;; Document files (*.doc *.rtf);; PNG files (*.png);;XML-Files(*.xml");
 
-          setName("ERROR: cannot read file ...");
-      }
-    else {setName("file was read succesfully .. ");}
-    QXmlStreamReader xml_reader (&xml_file);
+       if( !filename.isNull() )
+       {
+           QFile xml_file (filename);
 
-    if (xml_reader.readNextStartElement()) {
-        if (xml_reader.name()=="Man_ID_Table") {
-            setName("found the starting element");
+           if(!xml_file.open(QFile::ReadOnly | QFile::Text)){
+                 setName("ERROR: cannot read file ...");
+             }
+           else {
+               setName("file was read succesfully .. ");
+           }
+           QXmlStreamReader xml_reader (&xml_file);
+           while(!xml_reader.atEnd() && !xml_reader.hasError()) {
+           QXmlStreamReader::TokenType token = xml_reader.readNext();
+                 if(token == QXmlStreamReader::StartElement) {
 
-             while(xml_reader.readNextStartElement()){
-                 if (xml_reader.name()!= "Manufacturer") {
-                    setName (xml_reader.name().toString());
-                    xml_reader.skipCurrentElement();
-
-                 }else {
-                     setName (QString:: number( xml_reader.attributes().value("ID").toInt()));
+                           if(xml_reader.name() == "Manufacturer") {
+                            // setName (QString:: number( xml_reader.attributes().value("ID").toInt()));
+                             manufacturers.first.append(xml_reader.attributes().value("ID").toInt());
+                           }
+                           if(xml_reader.name() == "ManufacturerName"){
+                               QString elem = xml_reader.readElementText();
+                          //     setName( elem);
+                               manufacturers.second.append(elem);
+                           }
                  }
-             } setName("ENd of if ");
-        }
-       // else {"starting element is: " + xml_reader.name();}
+
+            }
+          ui->read_xml->setText("XML evaluated");
+          ui->read_xml->setStyleSheet("background-color:green;");
+
     }
-*/
-    unsigned char add = 7;
-    unsigned char slo = 1;  //slot of directory object header
-    unsigned char ind = 2;
-    srand(time(NULL));
-    unsigned char fla = 0xff & rand();
-    printf("f = %d, a = %d, s = %d, i = %d\n", fla, slo, ind);
-   // setName( "trying to open a connection to the gateway ... ");
-    socket_fd = create_socket();
-        std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, add, slo, ind);
+
 }
 
 

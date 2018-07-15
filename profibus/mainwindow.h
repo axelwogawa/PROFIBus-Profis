@@ -26,7 +26,7 @@ void parse_composite_directory (std::pair<std::vector<int>, int>& input, Dp_devi
 void make_dynamic_table (QString tableWidget,int coloumns,int row, QStringList coloumn_names);
 void insert_row_into_table(QString tableWidget,int coloumns,QStringList coloumn_names);
 void searchFieldBusDevices ();
-
+QString searchManufacturerById(int manufacturer_ID);
 private slots:
 
 void on_gateway_connect_clicked();
