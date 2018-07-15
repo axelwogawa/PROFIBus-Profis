@@ -27,9 +27,6 @@
 #include <parser.h>
 #include <qdir.h>
 #include <QFileDialog>
-
-
-
 // #### global variable definitions #######
  QString console = "";
  Dp_device default_device =  Dp_device(6, 1, 1, 1, 1, 1);
@@ -40,7 +37,6 @@
 // enum tableWidget{tableWidget_0,tableWidget_1,tableWidget_2,tableWidget_3} if we have too much time
  currentAction pointer;
  std::pair<QList<int> , QList<QString>> manufacturers;
-
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -111,7 +107,7 @@ std::pair<std::vector<int>, int> readparam (int iSockFd, unsigned char flag, uns
     printf("receiving...\n");
     int iRcvdBytes = recvfrom(iSockFd, buff, 1024, 0, (struct sockaddr*)&cliAddr, &cliLen);
     printf("received %d Byte(s)\n", iRcvdBytes);	//AW
-    main.setName("number of received bytes" + QString::number( iRcvdBytes));
+   // main.setName("number of received bytes" + QString::number( iRcvdBytes));
 
     if (iRcvdBytes > 0)
     {
@@ -271,8 +267,7 @@ void MainWindow::requestValues(int nRow, int nCol){
     // to be continued here !
     connect_value1=nRow;
     connect_value2=nCol;
-
-    unsigned char add = 6;  //address of first device
+    unsigned char add = default_device.getId();  //address of first device
     bool ok;
     unsigned char slo = (ui->tableWidget_2->item(nRow,1)->text()).toInt(&ok,10);
     unsigned char ind = (ui->tableWidget_2->item(nRow,2)->text()).toInt(&ok,10);
@@ -299,12 +294,11 @@ void MainWindow::requestParameters(int nRow, int nCol){
     {
         setName("Row" + QString::number(nRow) + "and Coloumn: " + QString::number(nCol) + "was clicked");
         // to be continued here !
-
         //request block object
         connect_value1=nRow;
         connect_value2=nCol;
         pointer = view;
-        unsigned char add = 6;  //address of first device
+        unsigned char add = default_device.getId();//6;  //address of first device
         bool ok;
         unsigned char slo = (ui->tableWidget->item(nRow,1)->text()).toInt(&ok,10);
         unsigned char ind = (ui->tableWidget->item(nRow,2)->text()).toInt(&ok,10);
@@ -493,7 +487,7 @@ void MainWindow:: parse_composite_directory (std::pair<std::vector<int>, int>& i
         unsigned char ind = 2;
         srand(time(NULL));
         unsigned char fla = 0xff & rand();
-        printf("f = %d, a = %d, s = %d, i = %d\n", fla, default_device.getAdd(), slo, ind);
+        printf("f = %d, a = %d, s = %d, i = %d\n", fla, default_device.getId(), slo, ind);
         setName( "trying to open a connection to the gateway ... ");
         //read DO header
        std::pair<std::vector<int>, int> res = readparam(socket_fd,fla, default_device.getId(), slo, ind);
@@ -581,10 +575,11 @@ void MainWindow::searchFieldBusDevices (){
         if (res.second ==13)
         {
            devices.append(i);
-           setName(QString::number(i));
+        //   setName(QString::number(i));
         }
 
     }
+
    make_dynamic_table("tableWidget_0",2,devices.size(),{"Address",""});
     for (int i=0;i<devices.size();i++){
         insert_row_into_table("tableWidget_0",2,{QString::number(devices.at(i)),"examine"});
