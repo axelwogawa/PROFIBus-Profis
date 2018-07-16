@@ -146,15 +146,15 @@ QString Parser::ActAlarm(int in){
     if (in & b7)
         out.append("Update Event ");
     if (in & b4)
-        out.append("LO_Alarm ");
+        out.append("LO ");
     if (in & b3)
-        out.append("LO_LO_Alarm ");
+        out.append("LO_LO ");
     if (in & b2)
-        out.append("HI_HI_Alarm ");
+        out.append("HI_HI ");
     if (in & b1)
-        out.append("HI_Alarm ");
+        out.append("HI ");
     if (in & b0)
-        out.append("Discrete Alarm");
+        out.append("Discrete");
     return out;
 }
 

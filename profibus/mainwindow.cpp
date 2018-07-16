@@ -29,7 +29,7 @@
 #include <QFileDialog>
 // #### global variable definitions #######
  QString console = "";
- Dp_device default_device =  Dp_device(6, 1, 1, 1, 1, 1);
+ Dp_device default_device =  Dp_device(6, 1, 1, 11, 1, 3);
  int socket_fd;
  int connect_value1 =0; // needed to compare weather the clicked cell has changed or not
  int connect_value2 =0;
@@ -202,6 +202,7 @@ void MainWindow::insert_row_into_table(QString tableWidget,int coloumns,QStringL
 
     table->setSortingEnabled(false);
     table->setCurrentCell(row+1,0,QItemSelectionModel::ClearAndSelect);
+    table->resizeColumnsToContents();
     table->adjustSize();
     table->show();
 }
@@ -242,20 +243,17 @@ void MainWindow::requestHeader( int nRow, int nCol ) {
         parse_doheader(res, default_device);
         default_device.setId(add);
         make_dynamic_table("tableWidget_3",2,6,{"type","value"});
-        insert_row_into_table("tableWidget_3",2,{"Device ID",QString::number(default_device.getId())});
-        insert_row_into_table("tableWidget_3",2,{"Revision Number",QString::number(default_device.getRev_no())});
-        insert_row_into_table("tableWidget_3",2,{"Number of Directory Objects", QString::number(default_device.getNo_do())});
+        insert_row_into_table("tableWidget_3",2,{"ID",QString::number(default_device.getId())});
+        insert_row_into_table("tableWidget_3",2,{"Revision Nr.",QString::number(default_device.getRev_no())});
+        insert_row_into_table("tableWidget_3",2,{"Directory Objects", QString::number(default_device.getNo_do())});
         insert_row_into_table("tableWidget_3",2,{"Number of Objects", "" +QString::number(default_device.getNo_obj())});
         insert_row_into_table("tableWidget_3",2,{"Index of First Object", "" +QString::number(default_device.getFst_idx())});
-        insert_row_into_table("tableWidget_3",2,{"Number of Types", "" +QString::number(default_device.getNo_typ())});
-        ui->label_5->setText("Header information of device " + add);
+        insert_row_into_table("tableWidget_3",2,{"Types", "" +QString::number(default_device.getNo_typ())});
+        ui->label_5->setText("Header information");
         ind =1;
         res = readparam(socket_fd,fla, add, slo, ind);
         printf("done");
         parse_composite_directory(res, default_device);
-
-
-
     }
 }
 void MainWindow::requestValues(int nRow, int nCol){
@@ -586,10 +584,22 @@ void MainWindow::searchFieldBusDevices (){
     }
 }
 
+void MainWindow::setGUI(){
+    ui->tableWidget_0->setFrameStyle(QFrame::NoFrame);
+    ui->tableWidget->setFrameStyle(QFrame::NoFrame);
+    ui->tableWidget_3->setFrameStyle(QFrame::NoFrame);
+    ui->tableWidget_2->setFrameStyle(QFrame::NoFrame);
+    ui->label_2->setText("");
+    ui->label_3->setText("");
+    ui->label_4->setText("");
+    ui->label_5->setText("");
+
+}
 void MainWindow::on_gateway_connect_clicked()
 {
 pointer = device;
 searchFieldBusDevices ();
+ui->label_4->setText("Detected devices");
 }
 
 
@@ -641,7 +651,17 @@ void MainWindow:: on_read_xml_clicked(){
           ui->read_xml->setStyleSheet("background-color:green;");
 
     }
-
+      /* socket_fd=create_socket();
+       unsigned char add = 7;
+       bool ok;
+       unsigned char slo = 1;
+       unsigned char ind = 24;
+       srand(time(NULL));
+       unsigned char fla = 0xff & rand();
+       printf("f = %d, a = %d, s = %d, i = %d\n", fla, add, slo, ind);
+       setName( "trying to open a connection to the gateway ... ");
+       std::pair<std::vector<int>, int> blockObj = readparam(socket_fd,fla, add, slo, ind);
+*/
 }
 
 

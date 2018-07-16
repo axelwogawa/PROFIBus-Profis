@@ -27,7 +27,7 @@ font: 57 italic 11pt &quot;Ubuntu&quot;;</string>
    <widget class="QPushButton" name="gateway_connect">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>50</x>
       <y>180</y>
       <width>181</width>
       <height>41</height>
@@ -56,23 +56,10 @@ font: 57 italic 11pt &quot;Ubuntu&quot;;</string>
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>200</y>
-      <width>551</width>
-      <height>301</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="read_xml">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>50</x>
       <y>120</y>
       <width>181</width>
       <height>41</height>
@@ -88,9 +75,9 @@ font: 57 italic 11pt &quot;Ubuntu&quot;;</string>
    <widget class="QTableWidget" name="tableWidget_2">
     <property name="geometry">
      <rect>
-      <x>1170</x>
+      <x>1010</x>
       <y>200</y>
-      <width>231</width>
+      <width>361</width>
       <height>301</height>
      </rect>
     </property>
@@ -104,25 +91,12 @@ font: 57 italic 11pt &quot;Ubuntu&quot;;</string>
      <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>170</y>
-      <width>371</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Select a device to see content here!</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>1170</x>
+      <x>1060</x>
       <y>170</y>
-      <width>421</width>
+      <width>241</width>
       <height>21</height>
      </rect>
     </property>
@@ -169,7 +143,7 @@ border-bottom-color: rgb(136, 138, 133);</string>
    <widget class="QTableWidget" name="tableWidget_0">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>50</x>
       <y>300</y>
       <width>221</width>
       <height>201</height>
@@ -179,7 +153,7 @@ border-bottom-color: rgb(136, 138, 133);</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>50</x>
       <y>270</y>
       <width>241</width>
       <height>17</height>
@@ -189,29 +163,80 @@ border-bottom-color: rgb(136, 138, 133);</string>
      <string>Found devices</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_3">
+   <widget class="QFrame" name="frame_2">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>200</y>
-      <width>256</width>
-      <height>301</height>
+      <x>40</x>
+      <y>110</y>
+      <width>1371</width>
+      <height>741</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>170</y>
-      <width>251</width>
-      <height>16</height>
-     </rect>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
     </property>
-    <property name="text">
-     <string>Header Information</string>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
     </property>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>90</y>
+       <width>411</width>
+       <height>301</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>60</y>
+       <width>371</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Select a device to see content here!</string>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tableWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>90</y>
+       <width>256</width>
+       <height>301</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>60</y>
+       <width>251</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Header Information</string>
+     </property>
+    </widget>
    </widget>
+   <zorder>frame_2</zorder>
+   <zorder>gateway_connect</zorder>
+   <zorder>textEdit</zorder>
+   <zorder>read_xml</zorder>
+   <zorder>tableWidget_2</zorder>
+   <zorder>label_3</zorder>
+   <zorder>frame</zorder>
+   <zorder>tableWidget_0</zorder>
+   <zorder>label_4</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

@@ -27,6 +27,7 @@ void make_dynamic_table (QString tableWidget,int coloumns,int row, QStringList c
 void insert_row_into_table(QString tableWidget,int coloumns,QStringList coloumn_names);
 void searchFieldBusDevices ();
 QString searchManufacturerById(int manufacturer_ID);
+void setGUI();
 private slots:
 
 void on_gateway_connect_clicked();
